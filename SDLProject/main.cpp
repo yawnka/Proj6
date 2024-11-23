@@ -28,8 +28,8 @@
 #include "Effects.h"
 
 // ––––– CONSTANTS ––––– //
-constexpr int WINDOW_WIDTH  = 640,
-          WINDOW_HEIGHT = 480;
+constexpr int WINDOW_WIDTH  = 640*2,
+          WINDOW_HEIGHT = 700;
 
 constexpr float BG_RED     = 0.1922f,
             BG_BLUE    = 0.549f,
@@ -306,11 +306,15 @@ void render()
     glUseProgram(g_shader_program.get_program_id());
     g_current_scene->render(&g_shader_program);
     
-    int enemy_count = g_current_scene->get_number_of_enemies();
+    std::string livesText = "LIVES: " + std::to_string(curr_lives);
+    
+    glm::vec3 player_position = g_current_scene->get_state().player->get_position();
+    glm::vec3 message_position = player_position + glm::vec3(-1.5f, 3.5f, 0.0f);
+    
+    Utility::draw_text(&g_shader_program, Utility::load_texture("assets/font1.png"), livesText, .4f, 0.05f, message_position );
     
     if (g_app_status == PAUSED) {
-        glm::vec3 player_position = g_current_scene->get_state().player->get_position();
-        glm::vec3 message_position = player_position + glm::vec3(-1.5f, 0.5f, 0.0f);
+        glm::vec3 message_position = player_position + glm::vec3(-1.5f, 1.0f, 0.0f);
 
         if (total_enemies_defeated== total_enemies_count) {
             // Display "You Win" text
