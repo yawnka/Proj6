@@ -13,18 +13,22 @@
 #include "ShaderProgram.h"
 #include "Entity.h"
 
-void Entity::ai_activate(Entity *player)
-{
-    switch (m_ai_type)
-    {
+void Entity::ai_activate(Entity *player) {
+    switch (m_ai_type) {
         case WALKER:
             ai_walk();
             break;
-            
         case GUARD:
             ai_guard(player);
             break;
-            
+        case JUMPER:
+            ai_jump();
+            break;
+        case PATROL:
+            ai_patrol();
+            break;
+        case SHOOTER:
+            ai_shoot(player);
         default:
             break;
     }
@@ -39,7 +43,9 @@ void Entity::ai_guard(Entity *player)
 {
     switch (m_ai_state) {
         case IDLE:
-            if (glm::distance(m_position, player->get_position()) < 3.0f) m_ai_state = WALKING;
+            if (glm::distance(m_position, player->get_position()) < 3.0f) {
+                m_ai_state = WALKING;
+            }
             break;
             
         case WALKING:
@@ -57,6 +63,45 @@ void Entity::ai_guard(Entity *player)
             break;
     }
 }
+
+
+void Entity::ai_jump() {
+    if (m_ai_state == JUMPING && m_collided_bottom) {
+        m_is_jumping = true;
+    }
+}
+
+void Entity::ai_patrol() {
+    if (m_ai_state != PATROLLING) return;
+
+    if (m_movement.x < 0) { // Moving left
+        m_movement = glm::vec3(-1.0f, 0.0f, 0.0f);
+        m_animation_indices = m_walking[0]; // set entity texture to left-facing animation frames
+    } else { // Moving right
+        m_movement = glm::vec3(1.0f, 0.0f, 0.0f);
+        m_animation_indices = m_walking[1]; // Set entity texture to right-facing animation frames
+    }
+
+    // Flip direction if a collision (into a wall) is detected
+    if (m_collided_left) {
+        m_movement.x = 1.0f;  // Flip to move right
+        m_animation_indices = m_walking[1]; // right-facing animation frames
+    } else if (m_collided_right) {
+        m_movement.x = -1.0f; // Flip to move left
+        m_animation_indices = m_walking[0]; // left-facing animation frames
+    }
+}
+
+
+void Entity::ai_shoot(Entity* player) {
+    if (!m_projectile_active) {
+        m_projectile_position = m_position;
+        m_projectile_active = true;
+        m_projectile_speed = 5.0f;
+    }
+}
+
+
 // Default constructor
 Entity::Entity()
     : m_position(0.0f), m_movement(0.0f), m_scale(1.0f, 1.0f, 0.0f), m_model_matrix(1.0f),
@@ -95,6 +140,8 @@ Entity::Entity(GLuint texture_id, float speed,  float width, float height, Entit
     for (int i = 0; i < SECONDS_PER_FRAME; ++i)
         for (int j = 0; j < SECONDS_PER_FRAME; ++j) m_walking[i][j] = 0;
 }
+
+
 Entity::Entity(GLuint texture_id, float speed, float width, float height, EntityType EntityType, AIType AIType, AIState AIState): m_position(0.0f), m_movement(0.0f), m_scale(1.0f, 1.0f, 0.0f), m_model_matrix(1.0f),
 m_speed(speed), m_animation_cols(0), m_animation_frames(0), m_animation_index(0),
 m_animation_rows(0), m_animation_indices(nullptr), m_animation_time(0.0f),
@@ -182,31 +229,34 @@ void const Entity::check_collision_y(Entity *collidable_entities, int collidable
     }
 }
 
-void const Entity::check_collision_x(Entity *collidable_entities, int collidable_entity_count)
-{
-    for (int i = 0; i < collidable_entity_count; i++)
-    {
+void const Entity::check_collision_x(Entity *collidable_entities, int collidable_entity_count) {
+    for (int i = 0; i < collidable_entity_count; i++) {
         Entity *collidable_entity = &collidable_entities[i];
-        
-        if (check_collision(collidable_entity))
-        {
+
+        // Skip inactive entities
+        if (!collidable_entity->is_active()) continue;
+
+        if (check_collision(collidable_entity)) {
             float x_distance = fabs(m_position.x - collidable_entity->m_position.x);
             float x_overlap = fabs(x_distance - (m_width / 2.0f) - (collidable_entity->m_width / 2.0f));
-            if (m_velocity.x > 0)
-            {
-                m_position.x     -= x_overlap;
-                m_velocity.x      = 0;
 
-                // Collision!
-                m_collided_right  = true;
-                
-            } else if (m_velocity.x < 0)
-            {
-                m_position.x    += x_overlap;
-                m_velocity.x     = 0;
- 
-                // Collision!
-                m_collided_left  = true;
+            if (m_velocity.x > 0) {
+                m_position.x -= x_overlap;
+                m_velocity.x = 0;
+                m_collided_right = true;
+            } else if (m_velocity.x < 0) {
+                m_position.x += x_overlap;
+                m_velocity.x = 0;
+                m_collided_left = true;
+            }
+
+            // Check if the collision is with a projectile
+            if (collidable_entity->m_entity_type == PROJECTILE) {
+                // Deactivate both the player and the projectile upon collision since they are one unit
+                if (this->m_entity_type == PLAYER) {
+                    this->deactivate();
+                }
+                collidable_entity->deactivate();
             }
         }
     }
@@ -291,82 +341,122 @@ void const Entity::check_collision_x(Map *map)
         m_collided_right = true;
     }
 }
+
+
 void Entity::update(float delta_time, Entity *player, Entity *collidable_entities, int collidable_entity_count, Map *map)
 {
     if (!m_is_active) return;
- 
-    m_collided_top    = false;
+
+    m_collided_top = false;
     m_collided_bottom = false;
-    m_collided_left   = false;
-    m_collided_right  = false;
-    
+    m_collided_left = false;
+    m_collided_right = false;
+
     if (m_entity_type == ENEMY) ai_activate(player);
-    
-    if (m_animation_indices != NULL)
-    {
-        if (glm::length(m_movement) != 0)
-        {
-            m_animation_time += delta_time;
-            float frames_per_second = (float) 1 / SECONDS_PER_FRAME;
-            
-            if (m_animation_time >= frames_per_second)
-            {
-                m_animation_time = 0.0f;
-                m_animation_index++;
-                
-                if (m_animation_index >= m_animation_frames)
-                {
-                    m_animation_index = 0;
-                }
+
+    if (m_projectile_active) {
+        m_projectile_position.x += m_projectile_speed * delta_time;
+
+        // Deactivate projectile if it moves out of screen bounds
+        if (m_projectile_position.x > map->get_right_bound() || m_projectile_position.x < map->get_left_bound()) {
+            m_projectile_active = false;
+        }
+    }
+
+    // Updating the animation only if the entity is moving
+    if (glm::length(m_movement) != 0) {
+        m_animation_time += delta_time;
+        float frames_per_second = (float) 1 / SECONDS_PER_FRAME;
+        
+        if (m_animation_time >= frames_per_second) {
+            m_animation_time = 0.0f;
+            m_animation_index++;
+
+            if (m_animation_index >= m_animation_frames) {
+                m_animation_index = 0;
             }
         }
     }
-    
+
     m_velocity.x = m_movement.x * m_speed;
     m_velocity += m_acceleration * delta_time;
-    
-    if (m_is_jumping)
-    {
-        m_is_jumping = false;
-        m_velocity.y += m_jumping_power;
-    }
-    
+
     m_position.y += m_velocity.y * delta_time;
-    
     check_collision_y(collidable_entities, collidable_entity_count);
     check_collision_y(map);
-    
+
     m_position.x += m_velocity.x * delta_time;
     check_collision_x(collidable_entities, collidable_entity_count);
     check_collision_x(map);
-    
+
+    if (m_is_jumping) {
+        m_is_jumping = false;
+        m_velocity.y += m_jumping_power;
+    }
+
     m_model_matrix = glm::mat4(1.0f);
     m_model_matrix = glm::translate(m_model_matrix, m_position);
 }
 
 
-void Entity::render(ShaderProgram* program)
-{
+void Entity::render(ShaderProgram* program) {
+    // Render the main entity
+    m_model_matrix = glm::mat4(1.0f);
+    m_model_matrix = glm::translate(m_model_matrix, m_position);
+    m_model_matrix = glm::scale(m_model_matrix, glm::vec3(m_visual_scale, m_visual_scale, 1.0f));
     program->set_model_matrix(m_model_matrix);
 
-    if (m_animation_indices != NULL)
-    {
+    if (m_animation_indices != NULL) {
         draw_sprite_from_texture_atlas(program, m_texture_id, m_animation_indices[m_animation_index]);
-        return;
+    } else {
+        float vertices[] = {
+            -0.5, -0.5, 0.5, -0.5, 0.5, 0.5,
+            -0.5, -0.5, 0.5, 0.5, -0.5, 0.5
+        };
+        float tex_coords[] = {
+            0.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+            0.0, 1.0, 1.0, 0.0, 0.0, 0.0
+        };
+
+        glBindTexture(GL_TEXTURE_2D, m_texture_id);
+
+        glVertexAttribPointer(program->get_position_attribute(), 2, GL_FLOAT, false, 0, vertices);
+        glEnableVertexAttribArray(program->get_position_attribute());
+        glVertexAttribPointer(program->get_tex_coordinate_attribute(), 2, GL_FLOAT, false, 0, tex_coords);
+        glEnableVertexAttribArray(program->get_tex_coordinate_attribute());
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        glDisableVertexAttribArray(program->get_position_attribute());
+        glDisableVertexAttribArray(program->get_tex_coordinate_attribute());
     }
 
-    float vertices[] = { -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5 };
-    float tex_coords[] = { 0.0,  1.0, 1.0,  1.0, 1.0, 0.0,  0.0,  1.0, 1.0, 0.0,  0.0, 0.0 };
+    // Render the projectile if active
+    if (m_projectile_active) {
+        glm::mat4 projectile_matrix = glm::mat4(1.0f);
+        projectile_matrix = glm::translate(projectile_matrix, m_projectile_position);
+        program->set_model_matrix(projectile_matrix);
 
-    glBindTexture(GL_TEXTURE_2D, m_texture_id);
+        float projectile_vertices[] = {
+            -0.2f, -0.2f, 0.2f, -0.2f, 0.2f, 0.2f,
+            -0.2f, -0.2f, 0.2f, 0.2f, -0.2f, 0.2f
+        };
 
-    glVertexAttribPointer(program->get_position_attribute(), 2, GL_FLOAT, false, 0, vertices);
-    glEnableVertexAttribArray(program->get_position_attribute());
-    glVertexAttribPointer(program->get_tex_coordinate_attribute(), 2, GL_FLOAT, false, 0, tex_coords);
-    glEnableVertexAttribArray(program->get_tex_coordinate_attribute());
+        float projectile_tex_coords[] = {
+            0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f
+        };
 
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindTexture(GL_TEXTURE_2D, m_projectile_texture_id);
 
-    glDisableVertexAttribArray(program->get_position_attribute());
-    glDisableVertexAttribArray(program->get_tex_coordinate_attribute());
+        glVertexAttribPointer(program->get_position_attribute(), 2, GL_FLOAT, false, 0, projectile_vertices);
+        glEnableVertexAttribArray(program->get_position_attribute());
+        glVertexAttribPointer(program->get_tex_coordinate_attribute(), 2, GL_FLOAT, false, 0, projectile_tex_coords);
+        glEnableVertexAttribArray(program->get_tex_coordinate_attribute());
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        glDisableVertexAttribArray(program->get_position_attribute());
+        glDisableVertexAttribArray(program->get_tex_coordinate_attribute());
+    }
 }

@@ -4,9 +4,9 @@
 #include "Map.h"
 #include "glm/glm.hpp"
 #include "ShaderProgram.h"
-enum EntityType { PLATFORM, PLAYER, ENEMY  };
-enum AIType     { WALKER, GUARD            };
-enum AIState    { WALKING, IDLE, ATTACKING };
+enum EntityType { PLATFORM, PLAYER, ENEMY, PROJECTILE  };
+enum AIType { WALKER, GUARD, JUMPER, PATROL, SHOOTER };
+enum AIState { WALKING, IDLE, ATTACKING, JUMPING, PATROLLING, SHOOTING };
 
 
 enum AnimationDirection { LEFT, RIGHT, UP, DOWN };
@@ -14,7 +14,11 @@ enum AnimationDirection { LEFT, RIGHT, UP, DOWN };
 class Entity
 {
 private:
+    bool m_projectile_active;
     bool m_is_active = true;
+    glm::vec3 m_projectile_position;
+    float m_projectile_speed = 5.0f;
+    GLuint m_projectile_texture_id;
     
     int m_walking[4][4]; // 4x4 array for walking animations
 
@@ -86,6 +90,9 @@ public:
     void ai_activate(Entity *player);
     void ai_walk();
     void ai_guard(Entity *player);
+    void ai_jump();
+    void ai_patrol();
+    void ai_shoot(Entity *player);
     
     void normalise_movement() { m_movement = glm::normalize(m_movement); }
 
@@ -100,12 +107,12 @@ public:
     void move_down() { m_movement.y = -1.0f; face_down(); }
     
     void const jump() { m_is_jumping = true; }
+    
 
     // ————— GETTERS ————— //
     EntityType const get_entity_type()    const { return m_entity_type;   };
     AIType     const get_ai_type()        const { return m_ai_type;       };
     AIState    const get_ai_state()       const { return m_ai_state;      };
-    float const get_jumping_power() const { return m_jumping_power; }
     glm::vec3 const get_position()     const { return m_position; }
     glm::vec3 const get_velocity()     const { return m_velocity; }
     glm::vec3 const get_acceleration() const { return m_acceleration; }
@@ -117,9 +124,14 @@ public:
     bool      const get_collided_bottom() const { return m_collided_bottom; }
     bool      const get_collided_right() const { return m_collided_right; }
     bool      const get_collided_left() const { return m_collided_left; }
-    
+    bool is_active() const { return m_is_active; }
     void activate()   { m_is_active = true;  };
     void deactivate() { m_is_active = false; };
+    float const get_height() const { return m_height; }
+    bool is_projectile_active() const { return m_projectile_active; }
+    glm::vec3 const get_projectile_position() const { return m_projectile_position; }
+    float const get_width() const { return m_width; }
+
     // ————— SETTERS ————— //
     void const set_entity_type(EntityType new_entity_type)  { m_entity_type = new_entity_type;};
     void const set_ai_type(AIType new_ai_type){ m_ai_type = new_ai_type;};
@@ -139,6 +151,8 @@ public:
     void const set_jumping_power(float new_jumping_power) { m_jumping_power = new_jumping_power;}
     void const set_width(float new_width) {m_width = new_width; }
     void const set_height(float new_height) {m_height = new_height; }
+    void set_projectile_texture(GLuint texture_id) { m_projectile_texture_id = texture_id; }
+    void set_projectile_active(bool active) { m_projectile_active = active; }
 
     // Setter for m_walking
     void set_walking(int walking[4][4])

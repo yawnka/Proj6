@@ -78,22 +78,18 @@ void LevelA::initialise()
     /**
     Enemies' stuff */
     GLuint enemy_texture_id = Utility::load_texture(ENEMY_FILEPATH);
-    
-    int enemy_walking_animation[4][4] = {
-            {8, 9, 10, 11}, // Left
-            {4, 5, 6, 7},   // Right
-            {0, 1, 2, 3}, // Up
-            {12, 13, 14, 15} // Down
-    };
 
+    int enemy_walking_animation[4][4] = {
+        {8, 9, 10, 11}, // Left
+        {4, 5, 6, 7},   // Right
+        {0, 1, 2, 3}, // Up
+        {12, 13, 14, 15} // Down
+    };
     m_game_state.enemies = new Entity[ENEMY_COUNT];
     glm::vec3 enemy_acceleration = glm::vec3(0.0f, -2.905f, 0.0f);
-    
-    for (int i = 0; i < ENEMY_COUNT; i++)
-    {
-    m_game_state.enemies[i] =  Entity(enemy_texture_id, 1.0f, 1.0f, 1.0f, ENEMY, GUARD, IDLE);
-    }
-    
+
+    m_game_state.enemies = new Entity[ENEMY_COUNT];
+
     for (int i = 0; i < ENEMY_COUNT; ++i) {
         m_game_state.enemies[i] = Entity(
             enemy_texture_id,          // texture id
@@ -112,11 +108,12 @@ void LevelA::initialise()
         );
         m_game_state.enemies[i].m_visual_scale = 1.0f; // scale of enemies
     }
-
     m_game_state.enemies[0].set_position(glm::vec3(8.0f, 0.0f, 0.0f));
-    m_game_state.enemies[0].set_movement(glm::vec3(0.0f));
-    m_game_state.enemies[0].set_acceleration(glm::vec3(0.0f, -9.81f, 0.0f));
-    
+//    m_game_state.enemies[0].set_movement(glm::vec3(0.0f));
+//    m_game_state.enemies[0].set_acceleration(glm::vec3(0.0f, -9.81f, 0.0f));
+    m_game_state.enemies[0].set_ai_type(GUARD);
+    m_game_state.enemies[0].set_ai_state(IDLE);
+    m_game_state.enemies[0].set_jumping_power(2.0f);
     
     /**
      BGM and SFX
