@@ -31,6 +31,7 @@ LevelC::~LevelC()
 void LevelC::initialise()
 {
     m_game_state.next_scene_id = -1;
+    m_number_of_enemies = 1;
     
     GLuint map_texture_id = Utility::load_texture("assets/tileset.png");
     m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELC_DATA, map_texture_id, 1.0f, 4, 1);

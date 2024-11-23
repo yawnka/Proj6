@@ -74,6 +74,7 @@ void switch_to_scene(Scene *scene)
 {
     g_current_scene = scene;
     g_current_scene->initialise(); // DON'T FORGET THIS STEP!
+    int enemy_count = g_current_scene->get_number_of_enemies();
 }
 
 void initialise()
@@ -189,14 +190,69 @@ void update()
         return;
     }
     
+    glm::vec3 player_pos = g_current_scene->get_state().player->get_position();
+    int enemy_count = g_current_scene->get_number_of_enemies();
+    
     while (delta_time >= FIXED_TIMESTEP) {
         g_current_scene->update(FIXED_TIMESTEP);
         g_effects->update(FIXED_TIMESTEP);
+        // adding everything from previous main project
+        g_current_scene->get_state().player->update(FIXED_TIMESTEP, g_current_scene->get_state().player, NULL, NULL, g_current_scene->get_state().map);
+        for (int i = 0; i < g_current_scene->get_number_of_enemies(); i++) {
+            if (!g_current_scene->get_state().enemies[i].is_active()) continue;
+
+            g_current_scene->get_state().enemies[i].ai_activate(g_current_scene->get_state().player);
+            g_current_scene->get_state().enemies[i].update(FIXED_TIMESTEP, g_current_scene->get_state().player, NULL, NULL, g_current_scene->get_state().map);
+
+                // Check if player lands on top of the enemy to defeat it
+                if (g_current_scene->get_state().player->check_collision(&g_current_scene->get_state().enemies[i])) {
+                    if (g_current_scene->get_state().player->get_position().y > g_current_scene->get_state().enemies[i].get_position().y + g_current_scene->get_state().enemies[i].get_height() / 2.0f) {
+                        g_current_scene->get_state().enemies[i].deactivate();
+                        g_current_scene->get_state().enemies_defeated += 1;
+
+                        // Ensure the projectile is deactivated if the enemy is a shooter
+                        if (g_current_scene->get_state().enemies[i].get_ai_type() == SHOOTER) {
+                            g_current_scene->get_state().enemies[i].set_projectile_active(false);
+                        }
+
+                        if (g_current_scene->get_state().enemies_defeated  == enemy_count) {
+                            g_app_status = PAUSED;
+                            return;
+                        }
+                    } else {
+                        g_app_status = PAUSED;
+                        return;
+                    }
+                }
+
+                // Check for collisions manually with the projectile since I couldnt get it to work correctly in Entity
+                if (g_current_scene->get_state().enemies[i].is_projectile_active()) {
+                    // Projectile boundaries
+                    float proj_left = g_current_scene->get_state().enemies[i].get_projectile_position().x - 0.1f;
+                    float proj_right = g_current_scene->get_state().enemies[i].get_projectile_position().x + 0.1f;
+                    float proj_top = g_current_scene->get_state().enemies[i].get_projectile_position().y + 0.1f;
+                    float proj_bottom = g_current_scene->get_state().enemies[i].get_projectile_position().y - 0.1f;
+
+                    // Player boundaries
+                    float player_left = player_pos.x - g_current_scene->get_state().player->get_width() / 2.0f;
+                    float player_right = player_pos.x + g_current_scene->get_state().player->get_width() / 2.0f;
+                    float player_top = player_pos.y + g_current_scene->get_state().player->get_height() / 2.0f;
+                    float player_bottom = player_pos.y - g_current_scene->get_state().player->get_height() / 2.0f;
+
+                    // Check collision between projectile and player
+                    if (proj_right > player_left && proj_left < player_right &&
+                        proj_top > player_bottom && proj_bottom < player_top) {
+                        g_app_status = PAUSED;
+                        return;
+                    }
+                }
+            }
         
 //        if (g_is_colliding_bottom == false && g_current_scene->get_state().player->get_collided_bottom()) g_effects->start(SHAKE, 1.0f);
         
         g_is_colliding_bottom = g_current_scene->get_state().player->get_collided_bottom();
         
+        // END
         delta_time -= FIXED_TIMESTEP;
     }
     

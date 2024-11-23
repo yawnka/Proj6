@@ -31,6 +31,7 @@ LevelA::~LevelA()
 
 void LevelA::initialise()
 {
+    m_number_of_enemies = 1;
     m_game_state.next_scene_id = -1;
     
     GLuint map_texture_id = Utility::load_texture("assets/tileset_1.png");
