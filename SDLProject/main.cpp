@@ -46,7 +46,7 @@ constexpr char V_SHADER_PATH[] = "shaders/vertex_lit.glsl",
 
 constexpr float MILLISECONDS_IN_SECOND = 1000.0;
 
-enum AppStatus { RUNNING, TERMINATED };
+enum AppStatus { RUNNING, PAUSED, TERMINATED };
 // ––––– GLOBAL VARIABLES ––––– //
 
 Scene  *g_current_scene;
@@ -128,6 +128,7 @@ void process_input()
 {
     // VERY IMPORTANT: If nothing is pressed, we don't want to go anywhere
     g_current_scene->get_state().player->set_movement(glm::vec3(0.0f));
+    g_current_scene->get_state().enemies->set_movement(glm::vec3(0.0f));
     
     SDL_Event event;
     while (SDL_PollEvent(&event))
@@ -175,6 +176,7 @@ void process_input()
 
 void update()
 {
+    if (g_app_status != RUNNING) return;
     float ticks = (float)SDL_GetTicks() / MILLISECONDS_IN_SECOND;
     float delta_time = ticks - g_previous_ticks;
     g_previous_ticks = ticks;
