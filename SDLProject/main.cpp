@@ -69,12 +69,14 @@ float g_accumulator = 0.0f;
 
 bool g_is_colliding_bottom = false;
 
+int total_enemies_defeated = 0;
+int total_enemies_count = 3;
+
 // ––––– GENERAL FUNCTIONS ––––– //
 void switch_to_scene(Scene *scene)
 {
     g_current_scene = scene;
     g_current_scene->initialise(); // DON'T FORGET THIS STEP!
-    int enemy_count = g_current_scene->get_number_of_enemies();
 }
 
 void initialise()
@@ -209,13 +211,13 @@ void update()
                     if (g_current_scene->get_state().player->get_position().y > g_current_scene->get_state().enemies[i].get_position().y + g_current_scene->get_state().enemies[i].get_height() / 2.0f) {
                         g_current_scene->get_state().enemies[i].deactivate();
                         g_current_scene->get_state().enemies_defeated += 1;
-
+                        total_enemies_defeated++;
                         // Ensure the projectile is deactivated if the enemy is a shooter
                         if (g_current_scene->get_state().enemies[i].get_ai_type() == SHOOTER) {
                             g_current_scene->get_state().enemies[i].set_projectile_active(false);
                         }
 
-                        if (g_current_scene->get_state().enemies_defeated  == enemy_count) {
+                        if (total_enemies_defeated == total_enemies_count) {
                             g_app_status = PAUSED;
                             return;
                         }
@@ -281,6 +283,36 @@ void render()
  
     glUseProgram(g_shader_program.get_program_id());
     g_current_scene->render(&g_shader_program);
+    
+    int enemy_count = g_current_scene->get_number_of_enemies();
+    
+    if (g_app_status == PAUSED) {
+        glm::vec3 player_position = g_current_scene->get_state().player->get_position();
+        glm::vec3 message_position = player_position + glm::vec3(-1.5f, 0.5f, 0.0f);
+
+        if (total_enemies_defeated== total_enemies_count) {
+            // Display "You Win" text
+            Utility::draw_text(
+                &g_shader_program,
+                Utility::load_texture("assets/font1.png"),
+                "You Win!",
+                0.8f,    // Font size
+                0.05f,   // Spacing
+                message_position
+            );
+        } else {
+            // Display "You Lose" text
+            Utility::draw_text(
+                &g_shader_program,
+                Utility::load_texture("assets/font1.png"),
+                "You Lose!",
+                0.8f,    // Font size
+                0.05f,   // Spacing
+                message_position
+            );
+        }
+    }
+    
     g_effects->render();
     
     SDL_GL_SwapWindow(g_display_window);
@@ -301,15 +333,17 @@ int main(int argc, char* argv[])
 {
     initialise();
     
-    while (g_app_status == RUNNING)
-    {
-        process_input();
-        update();
-        
-        if (g_current_scene->get_state().next_scene_id >= 0) switch_to_scene(g_levels[g_current_scene->get_state().next_scene_id]);
-        
-        render();
-    }
+    while (g_app_status != TERMINATED)
+        {
+            process_input();
+            
+            if (g_app_status == RUNNING) {
+                update();
+            }
+            if (g_current_scene->get_state().next_scene_id >= 0) switch_to_scene(g_levels[g_current_scene->get_state().next_scene_id]);
+            
+            render();
+        }
     
     shutdown();
     return 0;
