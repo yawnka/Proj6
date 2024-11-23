@@ -109,9 +109,9 @@ void LevelC::initialise()
         m_game_state.enemies[i].m_visual_scale = 1.0f; // scale of enemies
     }
     m_game_state.enemies[0].set_position(glm::vec3(3.0f, -5.0f, 0.0f));
-    m_game_state.enemies[0].set_ai_type(GUARD);
-    m_game_state.enemies[0].set_ai_state(IDLE);
-    m_game_state.enemies[0].set_jumping_power(2.0f);
+    m_game_state.enemies[0].set_ai_type(JUMPER);
+    m_game_state.enemies[0].set_ai_state(JUMPING);
+    m_game_state.enemies[0].set_jumping_power(5.0f);
     
     /**
      BGM and SFX
