@@ -126,6 +126,7 @@ void initialise() {
     switch_to_scene(g_main_menu);
 
     g_effects = new Effects(g_projection_matrix, g_view_matrix);
+    g_effects->start(FADEIN, 2.0f);
     player_initial_position = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
@@ -195,6 +196,10 @@ void process_input()
 void update()
 {
     if (g_app_status != RUNNING) return;
+    
+    if (curr_lives == 0) {
+        g_app_status = PAUSED;
+    }
 
     float ticks = (float)SDL_GetTicks() / MILLISECONDS_IN_SECOND;
     float delta_time = ticks - g_previous_ticks;
@@ -275,7 +280,7 @@ void update()
                     {
                         std::cout << "curr lives: " << curr_lives << std::endl;
 
-                        if (curr_lives > 0)
+                        if (curr_lives != 0)
                         {
                             curr_lives -= 1;
                             g_current_scene->get_state().player->set_position(player_initial_position);
@@ -309,7 +314,7 @@ void update()
                     {
                         std::cout << "curr lives: " << curr_lives << std::endl;
 
-                        if (curr_lives > 0)
+                        if (curr_lives != 0)
                         {
                             curr_lives -= 1;
                             g_current_scene->get_state().player->set_position(player_initial_position);
