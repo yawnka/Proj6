@@ -109,8 +109,6 @@ void LevelA::initialise()
         m_game_state.enemies[i].m_visual_scale = 1.0f; // scale of enemies
     }
     m_game_state.enemies[0].set_position(glm::vec3(8.0f, 0.0f, 0.0f));
-//    m_game_state.enemies[0].set_movement(glm::vec3(0.0f));
-//    m_game_state.enemies[0].set_acceleration(glm::vec3(0.0f, -9.81f, 0.0f));
     m_game_state.enemies[0].set_ai_type(GUARD);
     m_game_state.enemies[0].set_ai_state(IDLE);
     m_game_state.enemies[0].set_jumping_power(2.0f);
