@@ -124,7 +124,7 @@ void LevelB::initialise()
     Mix_PlayMusic(m_game_state.bgm, -1);
     Mix_VolumeMusic(0.0f);
     
-    m_game_state.jump_sfx = Mix_LoadWAV("assets/bounce.wav");
+    m_game_state.jump_sfx = Mix_LoadWAV("assets/jump.wav");
 }
 
 void LevelB::update(float delta_time)

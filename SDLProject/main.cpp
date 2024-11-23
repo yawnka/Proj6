@@ -234,31 +234,32 @@ void update()
         {
             for (int i = 0; i < g_current_scene->get_number_of_enemies(); i++)
             {
-                if (!g_current_scene->get_state().enemies[i].is_active()) continue;
+                Entity &enemy = g_current_scene->get_state().enemies[i];
 
-                g_current_scene->get_state().enemies[i].ai_activate(g_current_scene->get_state().player);
-                g_current_scene->get_state().enemies[i].update(FIXED_TIMESTEP,
-                                                               g_current_scene->get_state().player,
-                                                               NULL,
-                                                               NULL,
-                                                               g_current_scene->get_state().map);
+                if (!enemy.is_active()) continue;
+
+                enemy.ai_activate(g_current_scene->get_state().player);
+                enemy.update(FIXED_TIMESTEP,
+                             g_current_scene->get_state().player,
+                             NULL,
+                             NULL,
+                             g_current_scene->get_state().map);
 
                 // Collision checks only if player exists
                 if (g_current_scene->get_state().player &&
-                    g_current_scene->get_state().player->check_collision(&g_current_scene->get_state().enemies[i]))
+                    g_current_scene->get_state().player->check_collision(&enemy))
                 {
                     if (g_current_scene->get_state().player->get_position().y >
-                        g_current_scene->get_state().enemies[i].get_position().y +
-                        g_current_scene->get_state().enemies[i].get_height() / 2.0f)
+                        enemy.get_position().y + enemy.get_height() / 2.0f)
                     {
-                        g_current_scene->get_state().enemies[i].deactivate();
+                        enemy.deactivate();
                         g_current_scene->get_state().enemies_defeated += 1;
                         total_enemies_defeated++;
 
                         // Deactivate projectile if enemy is a shooter
-                        if (g_current_scene->get_state().enemies[i].get_ai_type() == SHOOTER)
+                        if (enemy.get_ai_type() == SHOOTER)
                         {
-                            g_current_scene->get_state().enemies[i].set_projectile_active(false);
+                            enemy.set_projectile_active(false);
                         }
 
                         std::cout << "total enemies: " << total_enemies_count << std::endl;
@@ -288,14 +289,13 @@ void update()
                 }
 
                 // Manual collision checks for projectiles
-                if (g_current_scene->get_state().enemies[i].is_projectile_active() &&
-                    g_current_scene->get_state().player)
+                if (enemy.is_projectile_active() && g_current_scene->get_state().player)
                 {
                     // Projectile boundaries
-                    float proj_left = g_current_scene->get_state().enemies[i].get_projectile_position().x - 0.1f;
-                    float proj_right = g_current_scene->get_state().enemies[i].get_projectile_position().x + 0.1f;
-                    float proj_top = g_current_scene->get_state().enemies[i].get_projectile_position().y + 0.1f;
-                    float proj_bottom = g_current_scene->get_state().enemies[i].get_projectile_position().y - 0.1f;
+                    float proj_left = enemy.get_projectile_position().x - 0.1f;
+                    float proj_right = enemy.get_projectile_position().x + 0.1f;
+                    float proj_top = enemy.get_projectile_position().y + 0.1f;
+                    float proj_bottom = enemy.get_projectile_position().y - 0.1f;
 
                     // Player boundaries
                     float player_left = player_pos.x - g_current_scene->get_state().player->get_width() / 2.0f;
@@ -370,6 +370,7 @@ void update()
         g_shader_program.set_light_position_matrix(g_current_scene->get_state().player->get_position());
     }
 }
+
 
 void render()
 {
