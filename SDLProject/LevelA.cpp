@@ -25,8 +25,19 @@ LevelA::~LevelA()
     delete [] m_game_state.enemies;
     delete    m_game_state.player;
     delete    m_game_state.map;
-    Mix_FreeChunk(m_game_state.jump_sfx);
-    Mix_FreeMusic(m_game_state.bgm);
+//    Mix_FreeChunk(m_game_state.jump_sfx);
+//    Mix_FreeMusic(m_game_state.bgm);
+    if (m_game_state.jump_sfx)
+    {
+        Mix_FreeChunk(m_game_state.jump_sfx);
+        m_game_state.jump_sfx = nullptr;
+    }
+
+    if (m_game_state.bgm)
+    {
+        Mix_FreeMusic(m_game_state.bgm);
+        m_game_state.bgm = nullptr;
+    }
 }
 
 void LevelA::initialise()
@@ -117,11 +128,22 @@ void LevelA::initialise()
     /**
      BGM and SFX
      */
-    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
-    
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) == -1)
+    {
+        std::cout << "Error initializing SDL_mixer: " << Mix_GetError() << std::endl;
+    }
+
+    // Load and play background music
     m_game_state.bgm = Mix_LoadMUS("assets/dooblydoo.mp3");
-    Mix_PlayMusic(m_game_state.bgm, -1);
-    Mix_VolumeMusic(0.0f);
+    if (!m_game_state.bgm)
+    {
+        std::cout << "Failed to load BGM: " << Mix_GetError() << std::endl;
+    }
+    else
+    {
+        Mix_PlayMusic(m_game_state.bgm, -1); // Play music in a loop
+        Mix_VolumeMusic(MIX_MAX_VOLUME / 2); // Set volume to 50% of the max
+    }
     
     m_game_state.jump_sfx = Mix_LoadWAV("assets/jump.wav");
 }
