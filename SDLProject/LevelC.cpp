@@ -10,12 +10,12 @@ constexpr char SPRITESHEET_FILEPATH[] = "assets/player0.png",
 unsigned int LEVELC_DATA[] =
 {
     3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2,
-    3, 1, 1, 1, 1, 1, 1, 0, 1, 2, 2, 2, 2, 2,
+    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    3, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2,
     3, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2
 };
 
@@ -33,8 +33,8 @@ void LevelC::initialise()
     m_game_state.next_scene_id = -1;
     m_number_of_enemies = 1;
     
-    GLuint map_texture_id = Utility::load_texture("assets/tileset.png");
-    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELC_DATA, map_texture_id, 1.0f, 4, 1);
+    GLuint map_texture_id = Utility::load_texture("assets/tileset_1.png");
+    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELC_DATA, map_texture_id, 1.0f,3, 1);
     
     // Code from main.cpp's initialise()
     /**
@@ -134,7 +134,7 @@ void LevelC::update(float delta_time)
         m_game_state.enemies[i].update(delta_time, m_game_state.player, NULL, NULL, m_game_state.map);
     }
     
-    if (m_game_state.player->get_position().y < -20.0f) m_game_state.next_scene_id = 2;
+    if (m_game_state.player->get_position().y < -30.0f) m_game_state.next_scene_id = 0;
 }
 
 void LevelC::render(ShaderProgram *program)

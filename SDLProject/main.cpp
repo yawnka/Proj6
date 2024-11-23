@@ -72,6 +72,8 @@ bool g_is_colliding_bottom = false;
 int total_enemies_defeated = 0;
 int total_enemies_count = 3;
 
+int curr_lives = 3;
+
 // ––––– GENERAL FUNCTIONS ––––– //
 void switch_to_scene(Scene *scene)
 {
@@ -193,7 +195,7 @@ void update()
     }
     
     glm::vec3 player_pos = g_current_scene->get_state().player->get_position();
-    int enemy_count = g_current_scene->get_number_of_enemies();
+    //int enemy_count = g_current_scene->get_number_of_enemies();
     
     while (delta_time >= FIXED_TIMESTEP) {
         g_current_scene->update(FIXED_TIMESTEP);
@@ -217,13 +219,21 @@ void update()
                             g_current_scene->get_state().enemies[i].set_projectile_active(false);
                         }
 
+                        std::cout << "total enemies: " << total_enemies_count << std::endl;
+                        std::cout << "enemies defeated: " << total_enemies_defeated << std::endl;
                         if (total_enemies_defeated == total_enemies_count) {
                             g_app_status = PAUSED;
                             return;
                         }
                     } else {
-                        g_app_status = PAUSED;
-                        return;
+                        std::cout << "curr lives: " << curr_lives << std::endl;
+                        if ( curr_lives > 0) {
+                            curr_lives -= 1;
+                        }
+                        else {
+                            g_app_status = PAUSED;
+                            return;
+                        }
                     }
                 }
 
@@ -244,8 +254,14 @@ void update()
                     // Check collision between projectile and player
                     if (proj_right > player_left && proj_left < player_right &&
                         proj_top > player_bottom && proj_bottom < player_top) {
-                        g_app_status = PAUSED;
-                        return;
+                        std::cout << "curr lives: " << curr_lives << std::endl;
+                        if ( curr_lives > 0) {
+                            curr_lives -= 1;
+                        }
+                        else {
+                            g_app_status = PAUSED;
+                            return;
+                        }
                     }
                 }
             }

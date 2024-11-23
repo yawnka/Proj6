@@ -10,12 +10,12 @@ constexpr char SPRITESHEET_FILEPATH[] = "assets/player0.png",
 unsigned int LEVELB_DATA[] =
 {
     3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2,
-    3, 1, 1, 1, 1, 1, 1, 0, 1, 2, 2, 2, 2, 2,
+    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    3, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2,
     3, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2
 };
 
@@ -33,8 +33,8 @@ void LevelB::initialise()
     m_game_state.next_scene_id = -1;
     m_number_of_enemies = 1;
     
-    GLuint map_texture_id = Utility::load_texture("assets/tileset.png");
-    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELB_DATA, map_texture_id, 1.0f, 4, 1);
+    GLuint map_texture_id = Utility::load_texture("assets/tileset_1.png");
+    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELB_DATA, map_texture_id, 1.0f,3, 1);
     
     // Code from main.cpp's initialise()
     /**
@@ -109,9 +109,11 @@ void LevelB::initialise()
         m_game_state.enemies[i].m_visual_scale = 1.0f; // scale of enemies
     }
     m_game_state.enemies[0].set_position(glm::vec3(8.0f, -5.0f, 0.0f));
-    m_game_state.enemies[0].set_ai_type(GUARD);
-    m_game_state.enemies[0].set_ai_state(IDLE);
+    m_game_state.enemies[0].set_ai_type(SHOOTER);
+    m_game_state.enemies[0].set_ai_state(SHOOTING);
     m_game_state.enemies[0].set_jumping_power(2.0f);
+    GLuint projectile_texture1 = Utility::load_texture("assets/bullet.png");
+    m_game_state.enemies[0].set_projectile_texture(projectile_texture1);
     
     /**
      BGM and SFX
@@ -134,7 +136,7 @@ void LevelB::update(float delta_time)
         m_game_state.enemies[i].update(delta_time, m_game_state.player, NULL, NULL, m_game_state.map);
     }
     
-    if (m_game_state.player->get_position().y < -10.0f) m_game_state.next_scene_id = 1;
+    if (m_game_state.player->get_position().y < -20.0f) m_game_state.next_scene_id = 2;
 }
 
 void LevelB::render(ShaderProgram *program)
