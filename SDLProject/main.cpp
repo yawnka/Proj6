@@ -73,6 +73,8 @@ int total_enemies_defeated = 0;
 int total_enemies_count = 3;
 
 int curr_lives = 3;
+glm::vec3 player_initial_position;
+
 
 // ––––– GENERAL FUNCTIONS ––––– //
 void switch_to_scene(Scene *scene)
@@ -127,6 +129,8 @@ void initialise()
     
     g_effects = new Effects(g_projection_matrix, g_view_matrix);
     //g_effects->start(SHRINK, 2.0f);
+    player_initial_position = g_current_scene->get_state().player->get_position();
+
 }
 
 void process_input()
@@ -229,6 +233,7 @@ void update()
                         std::cout << "curr lives: " << curr_lives << std::endl;
                         if ( curr_lives > 0) {
                             curr_lives -= 1;
+                            g_current_scene->get_state().player->set_position(player_initial_position);
                         }
                         else {
                             g_app_status = PAUSED;
@@ -257,6 +262,7 @@ void update()
                         std::cout << "curr lives: " << curr_lives << std::endl;
                         if ( curr_lives > 0) {
                             curr_lives -= 1;
+                            g_current_scene->get_state().player->set_position(player_initial_position);
                         }
                         else {
                             g_app_status = PAUSED;
