@@ -162,6 +162,8 @@ void LevelA::update(float delta_time)
 
 void LevelA::render(ShaderProgram *program)
 {
+    glClearColor(0.53f, 0.81f, 0.92f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
     m_game_state.map->render(program);
     m_game_state.player->render(program);
     for (int i = 0; i < m_number_of_enemies; i++)
