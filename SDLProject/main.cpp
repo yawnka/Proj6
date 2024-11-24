@@ -228,7 +228,6 @@ void update()
             }
             else
             {
-                // Reset player position (use your initial spawn point logic)
                 g_current_scene->get_state().player->set_position(player_initial_position);
             }
         }
