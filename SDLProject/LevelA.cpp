@@ -1,7 +1,7 @@
 #include "LevelA.h"
 #include "Utility.h"
 
-#define LEVEL_WIDTH 14
+#define LEVEL_WIDTH 22
 #define LEVEL_HEIGHT 8
 
 constexpr char SPRITESHEET_FILEPATH[] = "assets/player0.png",
@@ -10,15 +10,16 @@ constexpr char SPRITESHEET_FILEPATH[] = "assets/player0.png",
 
 unsigned int LEVELA_DATA[] =
 {
-    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1, 0, 0, 0, 0, 5, 5, 5, 5, 0, 0, 0, 0, 0,
-    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0,
-    1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 4, 4, 3, 0,
-    2, 2, 2, 2, 2, 0, 1, 1, 1, 0, 4, 4, 4, 3
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 0, 0, 0, 0, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 4, 4, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3,
+    2, 2, 2, 2, 2, 0, 1, 1, 1, 0, 4, 4, 4, 3, 4, 4, 3, 3, 4, 4, 4, 4
 };
+
 
 LevelA::~LevelA()
 {
@@ -42,7 +43,7 @@ LevelA::~LevelA()
 
 void LevelA::initialise()
 {
-    m_number_of_enemies = 1;
+    m_number_of_enemies = 2;
     m_game_state.next_scene_id = -1;
     
     GLuint map_texture_id = Utility::load_texture("assets/tileset_summer2.png");
@@ -125,6 +126,12 @@ void LevelA::initialise()
     m_game_state.enemies[0].set_ai_state(IDLE);
     m_game_state.enemies[0].set_jumping_power(2.0f);
     
+    m_game_state.enemies[1].set_position(glm::vec3(16.0f, -5.125f, 0.0f));
+    m_game_state.enemies[1].set_ai_type(PATROL);
+    m_game_state.enemies[1].set_ai_state(PATROLLING);
+    m_game_state.enemies[1].set_movement(glm::vec3(-1.0f, 0.0f, 0.0f));
+    m_game_state.enemies[1].set_speed(1.5f);
+    
     /**
      BGM and SFX
      */
@@ -152,12 +159,17 @@ void LevelA::update(float delta_time)
 {
     m_game_state.player->update(delta_time, m_game_state.player, m_game_state.enemies, ENEMY_COUNT, m_game_state.map);
     
-    for (int i = 0; i < ENEMY_COUNT; i++)
+    for (int i = 0; i < m_number_of_enemies; i++)
     {
         m_game_state.enemies[i].update(delta_time, m_game_state.player, NULL, NULL, m_game_state.map);
     }
     
-    if (m_game_state.player->get_position().y < -10.0f) m_game_state.next_scene_id = 1;
+    //if (m_game_state.player->get_position().y < -10.0f) m_game_state.next_scene_id = 1;
+    float rightmost_edge = LEVEL_WIDTH * 1.0f;
+    if (m_game_state.player->get_position().x > rightmost_edge)
+    {
+        m_game_state.next_scene_id = 1;
+    }
 }
 
 void LevelA::render(ShaderProgram *program)

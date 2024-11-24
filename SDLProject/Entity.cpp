@@ -49,20 +49,33 @@ void Entity::ai_guard(Entity *player)
             break;
             
         case WALKING:
-            if (m_position.x > player->get_position().x) {
+            if (m_position.x > player->get_position().x) { // Move left
                 m_movement = glm::vec3(-1.0f, 0.0f, 0.0f);
-            } else {
+                m_animation_indices = m_walking[0]; // Set left-facing animation frames
+            } else { // Move right
                 m_movement = glm::vec3(1.0f, 0.0f, 0.0f);
+                m_animation_indices = m_walking[1]; // Set right-facing animation frames
             }
             break;
             
         case ATTACKING:
+            // Add any attacking-specific logic here
             break;
             
         default:
             break;
     }
+
+    // Flip direction if a collision (into a wall) is detected
+    if (m_collided_left) {
+        m_movement.x = 1.0f;  // Flip to move right
+        m_animation_indices = m_walking[1]; // Set right-facing animation frames
+    } else if (m_collided_right) {
+        m_movement.x = -1.0f; // Flip to move left
+        m_animation_indices = m_walking[0]; // Set left-facing animation frames
+    }
 }
+
 
 
 void Entity::ai_jump() {
@@ -74,21 +87,22 @@ void Entity::ai_jump() {
 void Entity::ai_patrol() {
     if (m_ai_state != PATROLLING) return;
 
+    //movement follows the one that i created in patrol to help with animation
     if (m_movement.x < 0) { // Moving left
         m_movement = glm::vec3(-1.0f, 0.0f, 0.0f);
-        m_animation_indices = m_walking[0]; // set entity texture to left-facing animation frames
+        m_animation_indices = m_walking[0]; // left-facing animation frames
     } else { // Moving right
         m_movement = glm::vec3(1.0f, 0.0f, 0.0f);
-        m_animation_indices = m_walking[1]; // Set entity texture to right-facing animation frames
+        m_animation_indices = m_walking[1]; // right-facing animation frames
     }
 
     // Flip direction if a collision (into a wall) is detected
     if (m_collided_left) {
-        m_movement.x = 1.0f;  // Flip to move right
-        m_animation_indices = m_walking[1]; // right-facing animation frames
+        m_movement.x = 1.0f;  // move right
+        m_animation_indices = m_walking[1];
     } else if (m_collided_right) {
-        m_movement.x = -1.0f; // Flip to move left
-        m_animation_indices = m_walking[0]; // left-facing animation frames
+        m_movement.x = -1.0f; // move left
+        m_animation_indices = m_walking[0];
     }
 }
 
