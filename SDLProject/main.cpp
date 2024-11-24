@@ -218,6 +218,20 @@ void update()
     if (g_current_scene->get_state().player)
     {
         player_pos = g_current_scene->get_state().player->get_position();
+        // player loses a life for falling through gaps in the game
+        if (player_pos.y < -8.0f)
+        {
+            curr_lives -= 1;
+            if (curr_lives <= 0)
+            {
+                g_app_status = PAUSED;
+            }
+            else
+            {
+                // Reset player position (use your initial spawn point logic)
+                g_current_scene->get_state().player->set_position(player_initial_position);
+            }
+        }
     }
 
     while (delta_time >= FIXED_TIMESTEP)
