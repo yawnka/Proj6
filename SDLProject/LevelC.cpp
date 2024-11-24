@@ -11,12 +11,12 @@ unsigned int LEVELC_DATA[] =
 {
     3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    3, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 5, 5, 0,
     3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    3, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0,
+    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 0,
     3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2,
-    3, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2
+    3, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1,
 };
 
 LevelC::~LevelC()
@@ -44,8 +44,8 @@ void LevelC::initialise()
     m_game_state.next_scene_id = -1;
     m_number_of_enemies = 1;
     
-    GLuint map_texture_id = Utility::load_texture("assets/tileset_1.png");
-    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELC_DATA, map_texture_id, 1.0f,3, 1);
+    GLuint map_texture_id = Utility::load_texture("assets/tileset_winter.png");
+    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELC_DATA, map_texture_id, 1.0f,6, 1);
     
     // Code from main.cpp's initialise()
     /**
@@ -81,7 +81,7 @@ void LevelC::initialise()
     );
     m_game_state.player->m_visual_scale = 2.0f;
     
-    m_game_state.player->set_position(glm::vec3(5.0f, 0.0f, 0.0f));
+    m_game_state.player->set_position(glm::vec3(1.0f, 0.0f, 0.0f));
 
     // Jumping
     m_game_state.player->set_jumping_power(5.0f);
@@ -156,7 +156,7 @@ void LevelC::update(float delta_time)
         m_game_state.enemies[i].update(delta_time, m_game_state.player, NULL, NULL, m_game_state.map);
     }
     
-    if (m_game_state.player->get_position().y < -30.0f) m_game_state.next_scene_id = 0;
+    if (m_game_state.player->get_position().y < -30.0f) m_game_state.next_scene_id = 3;
 }
 
 void LevelC::render(ShaderProgram *program)

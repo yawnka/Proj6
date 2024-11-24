@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2916001F2CF19E4100640D94 /* LevelC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2916001E2CF19E3E00640D94 /* LevelC.cpp */; };
 		291600252CF2826600640D94 /* MainMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 291600242CF2826400640D94 /* MainMenu.cpp */; };
+		291600292CF2AE8E00640D94 /* End.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 291600282CF2AE8900640D94 /* End.cpp */; };
 		8401114628864A3000A4D23F /* Map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8401114428864A3000A4D23F /* Map.cpp */; };
 		844DC28E286650FA0099B183 /* assets in CopyFiles */ = {isa = PBXBuildFile; fileRef = 844DC28D28664F990099B183 /* assets */; };
 		845C739D2846DACD000D6994 /* helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845C739C2846DACD000D6994 /* helper.cpp */; };
@@ -47,6 +48,8 @@
 		2916001E2CF19E3E00640D94 /* LevelC.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LevelC.cpp; sourceTree = "<group>"; };
 		291600232CF2825C00640D94 /* MainMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainMenu.h; sourceTree = "<group>"; };
 		291600242CF2826400640D94 /* MainMenu.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MainMenu.cpp; sourceTree = "<group>"; };
+		291600272CF2AE8000640D94 /* End.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = End.h; sourceTree = "<group>"; };
+		291600282CF2AE8900640D94 /* End.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = End.cpp; sourceTree = "<group>"; };
 		8401114428864A3000A4D23F /* Map.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Map.cpp; sourceTree = "<group>"; };
 		8401114528864A3000A4D23F /* Map.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Map.h; sourceTree = "<group>"; };
 		844DC28D28664F990099B183 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
@@ -113,6 +116,8 @@
 		DBDF1B512323DE3F007CECB1 /* SDLProject */ = {
 			isa = PBXGroup;
 			children = (
+				291600282CF2AE8900640D94 /* End.cpp */,
+				291600272CF2AE8000640D94 /* End.h */,
 				291600242CF2826400640D94 /* MainMenu.cpp */,
 				291600232CF2825C00640D94 /* MainMenu.h */,
 				844DC28D28664F990099B183 /* assets */,
@@ -221,6 +226,7 @@
 				291600252CF2826600640D94 /* MainMenu.cpp in Sources */,
 				846D7EB2288DE52C0077FABA /* Effects.cpp in Sources */,
 				846D7EAF288DDE240077FABA /* LevelB.cpp in Sources */,
+				291600292CF2AE8E00640D94 /* End.cpp in Sources */,
 				8493D153286BFEC300217CD6 /* Entity.cpp in Sources */,
 				845C739D2846DACD000D6994 /* helper.cpp in Sources */,
 			);

@@ -10,14 +10,14 @@ constexpr char SPRITESHEET_FILEPATH[] = "assets/player0.png",
 
 unsigned int LEVELA_DATA[] =
 {
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-    3, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2,
-    3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 5, 5, 5, 5, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0,
+    1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 4, 4, 3, 0,
+    2, 2, 2, 2, 2, 0, 1, 1, 1, 0, 4, 4, 4, 3
 };
 
 LevelA::~LevelA()
@@ -45,8 +45,8 @@ void LevelA::initialise()
     m_number_of_enemies = 1;
     m_game_state.next_scene_id = -1;
     
-    GLuint map_texture_id = Utility::load_texture("assets/tileset_1.png");
-    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELA_DATA, map_texture_id, 1.0f,3, 1);
+    GLuint map_texture_id = Utility::load_texture("assets/tileset_summer2.png");
+    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELA_DATA, map_texture_id, 1.0f,6, 1);
     
     // Code from main.cpp's initialise()
     /**
@@ -82,7 +82,7 @@ void LevelA::initialise()
     );
     m_game_state.player->m_visual_scale = 2.0f;
     
-    m_game_state.player->set_position(glm::vec3(5.0f, 0.0f, 0.0f));
+    m_game_state.player->set_position(glm::vec3(0.0f, 0.0f, 0.0f));
 
     // Jumping
     m_game_state.player->set_jumping_power(5.0f);

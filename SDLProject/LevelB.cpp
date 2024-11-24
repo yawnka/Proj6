@@ -1,7 +1,7 @@
 #include "LevelB.h"
 #include "Utility.h"
 
-#define LEVEL_WIDTH 14
+#define LEVEL_WIDTH 19
 #define LEVEL_HEIGHT 8
 
 constexpr char SPRITESHEET_FILEPATH[] = "assets/player0.png",
@@ -9,14 +9,14 @@ constexpr char SPRITESHEET_FILEPATH[] = "assets/player0.png",
 
 unsigned int LEVELB_DATA[] =
 {
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2,
-    3, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0,
+    1, 0, 0, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
 };
 
 LevelB::~LevelB()
@@ -44,8 +44,8 @@ void LevelB::initialise()
     m_game_state.next_scene_id = -1;
     m_number_of_enemies = 1;
     
-    GLuint map_texture_id = Utility::load_texture("assets/tileset_1.png");
-    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELB_DATA, map_texture_id, 1.0f,3, 1);
+    GLuint map_texture_id = Utility::load_texture("assets/tileset_winter.png");
+    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELB_DATA, map_texture_id, 1.0f,6, 1);
     
     // Code from main.cpp's initialise()
     /**

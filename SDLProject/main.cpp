@@ -26,6 +26,7 @@
 #include "LevelB.h"
 #include "LevelC.h"
 #include "MainMenu.h"
+#include "End.h"
 #include "Effects.h"
 
 // ––––– CONSTANTS ––––– //
@@ -55,10 +56,11 @@ LevelA *g_levelA;
 LevelB *g_levelB;
 LevelC *g_levelC;
 MainMenu *g_main_menu;
+End *g_end;
 
 
 Effects *g_effects;
-Scene   *g_levels[3];
+Scene   *g_levels[4];
 
 SDL_Window* g_display_window;
 
@@ -117,10 +119,12 @@ void initialise() {
     g_levelA = new LevelA();
     g_levelB = new LevelB();
     g_levelC = new LevelC();
+    g_end = new End();
 
     g_levels[0] = g_levelA;
     g_levels[1] = g_levelB;
     g_levels[2] = g_levelC;
+    g_levels[3] = g_end;
 
     // Start at MainMenu
     switch_to_scene(g_main_menu);
