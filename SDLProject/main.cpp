@@ -74,9 +74,6 @@ float g_accumulator = 0.0f;
 
 bool g_is_colliding_bottom = false;
 
-int total_enemies_defeated = 0;
-int total_enemies_count = 3;
-
 int curr_lives = 3;
 glm::vec3 player_initial_position;
 
@@ -263,7 +260,6 @@ void update()
                     {
                         enemy.deactivate();
                         g_current_scene->get_state().enemies_defeated += 1;
-                        total_enemies_defeated++;
 
                         // Deactivate projectile if enemy is a shooter
                         if (enemy.get_ai_type() == SHOOTER)
@@ -273,8 +269,6 @@ void update()
                     }
                     else
                     {
-                        std::cout << "curr lives: " << curr_lives << std::endl;
-
                         if (curr_lives != 0)
                         {
                             curr_lives -= 1;
@@ -307,7 +301,6 @@ void update()
                     if (proj_right > player_left && proj_left < player_right &&
                         proj_top > player_bottom && proj_bottom < player_top)
                     {
-                        std::cout << "curr lives: " << curr_lives << std::endl;
 
                         if (curr_lives != 0)
                         {
@@ -337,17 +330,11 @@ void update()
 
     if (g_current_scene->get_state().player)
     {
-        // Get the player's position
         float player_x = g_current_scene->get_state().player->get_position().x;
-
-        // Dynamically retrieve the map's width
-        float map_right_edge = g_current_scene->get_state().map->get_width() * 1.0f; // Adjust for tile size if not 1.0f
-        float camera_right_limit = map_right_edge - 5.5f; // Half the camera width is 5.0f
-
-        // Determine camera position
+        float map_right_edge = g_current_scene->get_state().map->get_width() * 1.0f;
+        float camera_right_limit = map_right_edge - 5.5f;
         float camera_x = -player_x;
-
-        // Constrain the camera's x-position to stay within map boundaries
+        
         if (-camera_x > camera_right_limit)
         {
             camera_x = -camera_right_limit; // Stop at the map's rightmost edge
