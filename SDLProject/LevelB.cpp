@@ -42,7 +42,7 @@ LevelB::~LevelB()
 void LevelB::initialise()
 {
     m_game_state.next_scene_id = -1;
-    m_number_of_enemies = 1;
+    m_number_of_enemies = 3;
     
     GLuint map_texture_id = Utility::load_texture("assets/tileset_winter.png");
     m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELB_DATA, map_texture_id, 1.0f,6, 1);
@@ -125,6 +125,17 @@ void LevelB::initialise()
     m_game_state.enemies[0].set_jumping_power(2.0f);
     GLuint projectile_texture1 = Utility::load_texture("assets/bullet.png");
     m_game_state.enemies[0].set_projectile_texture(projectile_texture1);
+    
+    m_game_state.enemies[1].set_position(glm::vec3(11.45f, -2.125f, 0.0f));
+    m_game_state.enemies[1].set_ai_type(JUMPER);
+    m_game_state.enemies[1].set_ai_state(JUMPING);
+    m_game_state.enemies[1].set_jumping_power(2.0f);
+
+    m_game_state.enemies[2].set_position(glm::vec3(16.95f, -1.125f, 0.0f));
+    m_game_state.enemies[2].set_ai_type(GUARD);
+    m_game_state.enemies[2].set_ai_state(IDLE);
+    m_game_state.enemies[2].set_jumping_power(2.0f);
+        
     
     /**
      BGM and SFX
