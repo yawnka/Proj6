@@ -156,7 +156,12 @@ void LevelC::update(float delta_time)
         m_game_state.enemies[i].update(delta_time, m_game_state.player, NULL, NULL, m_game_state.map);
     }
     
-    if (m_game_state.player->get_position().y < -30.0f) m_game_state.next_scene_id = 3;
+    //if (m_game_state.player->get_position().y < -30.0f) m_game_state.next_scene_id = 3;
+    float rightmost_edge = LEVEL_WIDTH * 1.0f;
+    if (m_game_state.player->get_position().x > rightmost_edge)
+    {
+        m_game_state.next_scene_id = 3; // end screen aka "you win"
+    }
 }
 
 void LevelC::render(ShaderProgram *program)

@@ -158,7 +158,12 @@ void LevelB::update(float delta_time)
         m_game_state.enemies[i].update(delta_time, m_game_state.player, NULL, NULL, m_game_state.map);
     }
     
-    if (m_game_state.player->get_position().y < -20.0f) m_game_state.next_scene_id = 2;
+    //if (m_game_state.player->get_position().y < -20.0f) m_game_state.next_scene_id = 2;
+    float rightmost_edge = LEVEL_WIDTH * 1.0f;
+    if (m_game_state.player->get_position().x > rightmost_edge)
+    {
+        m_game_state.next_scene_id = 2;
+    }
 }
 
 void LevelB::render(ShaderProgram *program)

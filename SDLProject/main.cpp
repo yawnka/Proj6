@@ -3,7 +3,7 @@
 #define FIXED_TIMESTEP 0.0166666f
 #define LEVEL1_WIDTH 14
 #define LEVEL1_HEIGHT 8
-#define LEVEL1_LEFT_EDGE 5.0f
+#define LEVEL1_LEFT_EDGE 6.0f
 
 #ifdef _WINDOWS
 #include <GL/glew.h>
@@ -270,15 +270,6 @@ void update()
                         {
                             enemy.set_projectile_active(false);
                         }
-
-                        std::cout << "total enemies: " << total_enemies_count << std::endl;
-                        std::cout << "enemies defeated: " << total_enemies_defeated << std::endl;
-
-                        if (total_enemies_defeated == total_enemies_count)
-                        {
-                            g_app_status = PAUSED;
-                            return;
-                        }
                     }
                     else
                     {
@@ -321,7 +312,7 @@ void update()
                         if (curr_lives != 0)
                         {
                             curr_lives -= 1;
-                            g_current_scene->get_state().player->set_position(player_initial_position);
+                            g_current_scene->get_state().player->set_position(player_initial_position); //reset player
                         }
                         else
                         {
@@ -344,16 +335,36 @@ void update()
     // Prevent the camera from showing anything outside of the "edge" of the level
     g_view_matrix = glm::mat4(1.0f);
 
-    if (g_current_scene->get_state().player &&
-        g_current_scene->get_state().player->get_position().x > LEVEL1_LEFT_EDGE)
+    if (g_current_scene->get_state().player)
     {
-        g_view_matrix = glm::translate(g_view_matrix,
-                                       glm::vec3(-g_current_scene->get_state().player->get_position().x, 3.75, 0));
+        // Get the player's position
+        float player_x = g_current_scene->get_state().player->get_position().x;
+
+        // Dynamically retrieve the map's width
+        float map_right_edge = g_current_scene->get_state().map->get_width() * 1.0f; // Adjust for tile size if not 1.0f
+        float camera_right_limit = map_right_edge - 5.5f; // Half the camera width is 5.0f
+
+        // Determine camera position
+        float camera_x = -player_x;
+
+        // Constrain the camera's x-position to stay within map boundaries
+        if (-camera_x > camera_right_limit)
+        {
+            camera_x = -camera_right_limit; // Stop at the map's rightmost edge
+        }
+        else if (player_x < LEVEL1_LEFT_EDGE)
+        {
+            camera_x = -LEVEL1_LEFT_EDGE; // Stop at the map's leftmost edge
+        }
+
+        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(camera_x, 3.50, 0));
     }
     else
     {
+        // Default camera position if no player exists
         g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-5, 3.75, 0));
     }
+
 
     if (g_current_scene->get_state().next_scene_id >= 0)
     {
@@ -373,7 +384,7 @@ void update()
         }
     }
 
-    g_view_matrix = glm::translate(g_view_matrix, g_effects->get_view_offset());
+    //g_view_matrix = glm::translate(g_view_matrix, g_effects->get_view_offset());
     if (g_current_scene->get_state().player)
     {
         g_shader_program.set_light_position_matrix(g_current_scene->get_state().player->get_position());
@@ -404,7 +415,6 @@ void render()
     {
         glm::vec3 message_position;
 
-        // Display messages based on game state
         if (g_current_scene->get_state().player)
         {
             glm::vec3 player_position = g_current_scene->get_state().player->get_position();
@@ -412,23 +422,10 @@ void render()
         }
         else
         {
-            // Default position if player does not exist
-            message_position = glm::vec3(-1.5f, 1.0f, 0.0f);
+            message_position = glm::vec3(-1.5f, 1.0f, 0.0f); //player does not exist so defualt pos
         }
 
-        if (total_enemies_defeated == total_enemies_count)
-        {
-            // Display "You Win" text
-            Utility::draw_text(
-                &g_shader_program,
-                Utility::load_texture("assets/font1.png"),
-                "You Win!",
-                0.8f,    // Font size
-                0.05f,   // Spacing
-                message_position
-            );
-        }
-        else
+        if (curr_lives == 0)
         {
             // Display "You Lose" text
             Utility::draw_text(
