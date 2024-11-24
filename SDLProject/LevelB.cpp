@@ -81,7 +81,7 @@ void LevelB::initialise()
     );
     m_game_state.player->m_visual_scale = 2.0f;
     
-    m_game_state.player->set_position(glm::vec3(5.0f, 0.0f, 0.0f));
+    m_game_state.player->set_position(glm::vec3(7.0f, 0.0f, 0.0f));
 
     // Jumping
     m_game_state.player->set_jumping_power(5.0f);
