@@ -403,12 +403,16 @@ void render()
     // Render player-specific information only if the player exists
     if (g_current_scene->get_state().player)
     {
+        glm::mat4 ui_view_matrix = glm::mat4(1.0f);
+        g_shader_program.set_view_matrix(ui_view_matrix);
+        
         std::string livesText = "LIVES: " + std::to_string(curr_lives);
 
-        glm::vec3 player_position = g_current_scene->get_state().player->get_position();
-        glm::vec3 message_position = player_position + glm::vec3(-1.5f, 3.5f, 0.0f);
+        glm::vec3 message_position = glm::vec3(-4.5f, 3.1f, 0.0f);
 
         Utility::draw_text(&g_shader_program, Utility::load_texture("assets/font1.png"), livesText, .4f, 0.05f, message_position);
+        
+        g_shader_program.set_view_matrix(g_view_matrix);
     }
 
     if (g_app_status == PAUSED)
@@ -427,15 +431,18 @@ void render()
 
         if (curr_lives == 0)
         {
+            glm::mat4 ui_view_matrix = glm::mat4(1.0f);
+            g_shader_program.set_view_matrix(ui_view_matrix);
             // Display "You Lose" text
             Utility::draw_text(
                 &g_shader_program,
                 Utility::load_texture("assets/font1.png"),
                 "You Lose!",
-                0.8f,    // Font size
-                0.05f,   // Spacing
+                0.6f,    // Font size
+                0.00f,   // Spacing
                 message_position
             );
+            g_shader_program.set_view_matrix(g_view_matrix);
         }
     }
 
