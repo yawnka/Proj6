@@ -13,15 +13,13 @@ void End::update(float delta_time) {
 }
 
 void End::render(ShaderProgram *program) {
-    //glClearColor(0.1f, 0.1f, 0.1f, 1.0f); // grey Solid color background
-    //glClearColor(1.1f, 1.1f, 1.1f, 1.0f); // white Solid color background
-    glClearColor(0.8f, 0.9f, 0.75f, 1.0f); // Light matcha green Solid color background
+    glClearColor(0.37f, 0.45f, 0.55f, 1.0f); // ash blue color
 
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glm::vec3 title_position = glm::vec3(1.0f, -2.0f, 0.0f);
+    glm::vec3 title_position = glm::vec3(4.0f, -3.0f, 0.0f);
     Utility::draw_text(program, Utility::load_texture("assets/font1.png"), "The End", 0.4f, 0.02f, title_position);
 
-    glm::vec3 prompt_position = glm::vec3(1.0f, -4.0f, 0.0f);
+    glm::vec3 prompt_position = glm::vec3(4.0f, -5.0f, 0.0f);
     Utility::draw_text(program, Utility::load_texture("assets/font1.png"), "You Won!", 0.4f, 0.02f, prompt_position);
 }
