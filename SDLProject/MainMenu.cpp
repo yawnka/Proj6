@@ -1,3 +1,12 @@
+/**
+* Author: Yanka Sikder
+* Assignment: Platformer
+* Date due: 2023-12-02, 11:59pm
+* I pledge that I have completed this assignment without
+* collaborating with anyone else, in conformance with the
+* NYU School of Engineering Policies and Procedures on
+* Academic Misconduct.
+**/
 #include "MainMenu.h"
 #include "Utility.h"
 
@@ -23,7 +32,7 @@ void MainMenu::render(ShaderProgram *program) {
     glClear(GL_COLOR_BUFFER_BIT);
 
     glm::vec3 title_position = glm::vec3(1.0f, -1.0f, 0.0f);
-    Utility::draw_text(program, Utility::load_texture("assets/font1.png"), "Jungle Adventure!", 0.4f, 0.02f, title_position);
+    Utility::draw_text(program, Utility::load_texture("assets/font1.png"), "Adventurer Explore!", 0.4f, 0.02f, title_position);
 
     glm::vec3 prompt_position = glm::vec3(1.0f, -2.0f, 0.0f);
     Utility::draw_text(program, Utility::load_texture("assets/font1.png"), "Press Enter to Start:", 0.4f, 0.02f, prompt_position);

@@ -1,3 +1,12 @@
+/**
+* Author: Yanka Sikder
+* Assignment: Platformer
+* Date due: 2023-12-02, 11:59pm
+* I pledge that I have completed this assignment without
+* collaborating with anyone else, in conformance with the
+* NYU School of Engineering Policies and Procedures on
+* Academic Misconduct.
+**/
 #include "Effects.h"
 
 Effects::Effects(glm::mat4 projection_matrix, glm::mat4 view_matrix) :  m_current_effect(NONE), m_alpha(1.0f), m_effect_speed(1.0f), m_size(10.0f), m_view_offset(glm::vec3(0.0f))
