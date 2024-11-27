@@ -158,17 +158,31 @@ void process_input()
                 switch (event.key.keysym.sym)
                 {
                     case SDLK_q:
-                        // Quit the game with a keystroke
                         g_app_status = TERMINATED;
                         break;
 
                     case SDLK_SPACE:
                         // Jump if a player exists and is on the ground
-                        if (g_current_scene->get_state().player &&
+                        if (g_app_status == RUNNING &&
+                            g_current_scene->get_state().player &&
                             g_current_scene->get_state().player->get_collided_bottom())
                         {
                             g_current_scene->get_state().player->jump();
                             Mix_PlayChannel(-1, g_current_scene->get_state().jump_sfx, 0);
+                        }
+                        break;
+
+                    case SDLK_p: // EXTRA CREDIT PSEUO MENU SCREEN FOR PAUSE WITH KEY PRESS P
+                        if (g_app_status == RUNNING)
+                        {
+                            g_app_status = PAUSED;
+                        }
+                        break;
+
+                    case SDLK_RETURN: // Enter key to handle on/off for pause screen
+                        if (g_app_status == PAUSED)
+                        {
+                            g_app_status = RUNNING;
                         }
                         break;
 
@@ -180,6 +194,8 @@ void process_input()
                 break;
         }
     }
+
+    if (g_app_status != RUNNING) return;
 
     // Handle player movement only if `player` exists
     if (g_current_scene->get_state().player)
@@ -403,61 +419,66 @@ void update()
 
 void render()
 {
-    g_shader_program.set_view_matrix(g_view_matrix);
     glClear(GL_COLOR_BUFFER_BIT);
-
+    g_shader_program.set_view_matrix(g_view_matrix);
     glUseProgram(g_shader_program.get_program_id());
+
+    // Render the current scene (map, player, enemies)
     g_current_scene->render(&g_shader_program);
 
-    // Render player-specific information only if the player exists
     if (g_current_scene->get_state().player)
     {
-        glm::mat4 ui_view_matrix = glm::mat4(1.0f);
+        glm::mat4 ui_view_matrix = glm::mat4(1.0f); // Identity matrix for UI rendering
         g_shader_program.set_view_matrix(ui_view_matrix);
-        
-        std::string livesText = "LIVES: " + std::to_string(curr_lives);
 
+        std::string livesText = "LIVES: " + std::to_string(curr_lives);
         glm::vec3 message_position = glm::vec3(-4.5f, 3.1f, 0.0f);
 
-        Utility::draw_text(&g_shader_program, Utility::load_texture("assets/font1.png"), livesText, .4f, 0.05f, message_position);
-        
+        Utility::draw_text(&g_shader_program, Utility::load_texture("assets/font1.png"), livesText, 0.4f, 0.05f, message_position);
+
         g_shader_program.set_view_matrix(g_view_matrix);
     }
 
+    // Handle pause rendering
     if (g_app_status == PAUSED)
     {
-        glm::vec3 message_position;
+        glm::mat4 ui_view_matrix = glm::mat4(1.0f);
+        g_shader_program.set_view_matrix(ui_view_matrix);
 
-        if (g_current_scene->get_state().player)
-        {
-            glm::vec3 player_position = g_current_scene->get_state().player->get_position();
-            message_position = player_position + glm::vec3(-1.5f, 1.0f, 0.0f);
-        }
-        else
-        {
-            message_position = glm::vec3(-1.5f, 1.0f, 0.0f); //player does not exist so defualt pos
-        }
+        glm::vec3 message_position = glm::vec3(-1.5f, 1.0f, 0.0f);
 
-        if (curr_lives == 0)
+        if (curr_lives == 0) //if player is dead, you lose!
         {
-            glm::mat4 ui_view_matrix = glm::mat4(1.0f);
-            g_shader_program.set_view_matrix(ui_view_matrix);
-            // Display "You Lose" text
             Utility::draw_text(
                 &g_shader_program,
                 Utility::load_texture("assets/font1.png"),
                 "You Lose!",
-                0.6f,    // Font size
-                0.00f,   // Spacing
+                0.6f, // Font size
+                0.0f, // Spacing
                 message_position
             );
-            g_shader_program.set_view_matrix(g_view_matrix);
         }
+        else // if P is pressed so paused state, then the player paused the game, enter to unpause.
+        {
+            Utility::draw_text(
+                &g_shader_program,
+                Utility::load_texture("assets/font1.png"),
+                "Press Enter to Resume",
+                0.6f, // Font size
+                0.0f, // Spacing
+                message_position
+            );
+        }
+
+        // Restoring the original game view matrix to everything is rendered correctly
+        g_shader_program.set_view_matrix(g_view_matrix);
     }
 
     g_effects->render();
+
     SDL_GL_SwapWindow(g_display_window);
 }
+
 
 
 void shutdown()
