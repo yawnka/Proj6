@@ -90,13 +90,20 @@ glm::vec3 player_initial_position;
 // ––––– GENERAL FUNCTIONS ––––– //
 void switch_to_scene(Scene *scene)
 {
+    // unfortunately the effects did not work as I wanted it to for extra credit, but I implemented
+    // a baisc effect in the initialise function at the beginning for it!
+//    g_effects = new Effects(g_projection_matrix, g_view_matrix);
+//    g_effects->start(FADEOUT, 2.0f);
     g_current_scene = scene;
     g_current_scene->initialise(); // DON'T FORGET THIS STEP!
+//    g_effects = new Effects(g_projection_matrix, g_view_matrix);
+//    g_effects->start(FADEIN, 2.0f);
 }
+
 
 void initialise() {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
-    g_display_window = SDL_CreateWindow("Game Menu",
+    g_display_window = SDL_CreateWindow("Adventurer Tale",
                                         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                         WINDOW_WIDTH, WINDOW_HEIGHT,
                                         SDL_WINDOW_OPENGL);
@@ -132,11 +139,12 @@ void initialise() {
     g_levels[2] = g_levelC;
     g_levels[3] = g_end;
 
+    //g_effects = new Effects(g_projection_matrix, g_view_matrix);
     // Start at MainMenu
     switch_to_scene(g_main_menu);
-
     g_effects = new Effects(g_projection_matrix, g_view_matrix);
-    //g_effects->start(FADEIN, 2.0f);
+    g_effects->start(SHRINK, 1.5f);
+    //g_effects->start(FADEIN, 4.0f);
     player_initial_position = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
@@ -412,6 +420,7 @@ void update()
     //g_view_matrix = glm::translate(g_view_matrix, g_effects->get_view_offset());
     if (g_current_scene->get_state().player)
     {
+        g_view_matrix = glm::translate(g_view_matrix, g_effects->get_view_offset());
         g_shader_program.set_light_position_matrix(g_current_scene->get_state().player->get_position());
     }
 }

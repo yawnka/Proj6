@@ -177,6 +177,7 @@ void LevelA::update(float delta_time)
     float rightmost_edge = LEVEL_WIDTH * 1.0f;
     if (m_game_state.player->get_position().x > rightmost_edge)
     {
+        //g_effects->start(FADEOUT, 2.0f); // Optional: Add a fade-out effect before switching scenes
         m_game_state.next_scene_id = 1;
     }
 }

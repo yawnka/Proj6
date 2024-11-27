@@ -40,6 +40,7 @@ void Effects::draw_overlay()
 
 void Effects::start(EffectType effect_type, float effect_speed)
 {
+    std::cout << "Starting effect: " << effect_type << " with speed: " << effect_speed << std::endl;
     m_current_effect = effect_type;
     m_effect_speed = effect_speed;
 
