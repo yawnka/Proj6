@@ -1,12 +1,3 @@
-/**
-* Author: Yanka Sikder
-* Assignment: Platformer
-* Date due: 2023-11-26, 11:59pm
-* I pledge that I have completed this assignment without
-* collaborating with anyone else, in conformance with the
-* NYU School of Engineering Policies and Procedures on
-* Academic Misconduct.
-**/
 #include "LevelC.h"
 #include "Utility.h"
 
@@ -53,8 +44,10 @@ void LevelC::initialise()
     m_game_state.next_scene_id = -1;
     m_number_of_enemies = 3;
     
-    GLuint map_texture_id = Utility::load_texture("assets/tileset_winter.png");
-    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELC_DATA, map_texture_id, 1.0f,6, 1);
+//    GLuint map_texture_id = Utility::load_texture("assets/tileset_winter.png");
+//    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELC_DATA, map_texture_id, 1.0f,6, 1);
+    GLuint map_texture_id = Utility::load_texture("assets/mainlevbuild.png");
+    m_game_state.map = new Map("assets/map1.tmx", map_texture_id, 16.0f, 64, 40);
     
     // Code from main.cpp's initialise()
     /**

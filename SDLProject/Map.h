@@ -12,6 +12,7 @@
 #include "glm/mat4x4.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "ShaderProgram.h"
+#include "tinyxml2.h"
 
 class Map {
 private:
@@ -29,18 +30,20 @@ private:
     std::vector<float> m_texture_coordinates;
     
     float m_left_bound, m_right_bound, m_top_bound, m_bottom_bound;
+
+    std::vector<std::vector<unsigned int>> m_layers;
     
 public:
-    Map(int width, int height, unsigned int *level_data, GLuint texture_id, float tile_size, int
-    tile_count_x, int tile_count_y);
-    
-    void build();
+    Map(const char* tmx_file, GLuint texture_id, float tile_size, int tile_count_x, int tile_count_y);
     void render(ShaderProgram *program);
     bool is_solid(glm::vec3 position, float *penetration_x, float *penetration_y);
+    void build(); // Build vertices and texture coordinates for rendering
+    void render_layer(ShaderProgram* program, int layer_index);
     
     // Getters
     int const get_width()  const  { return this->m_width;  }
     int const get_height() const  { return this->m_height; }
+    int get_layer_count() const; 
     
     unsigned int* const get_level_data() const { return this->m_level_data; }
     GLuint        const get_texture_id() const { return this->m_texture_id; }
@@ -56,4 +59,6 @@ public:
     float const get_right_bound()  const { return this->m_right_bound;  }
     float const get_top_bound()    const { return this->m_top_bound;    }
     float const get_bottom_bound() const { return this->m_bottom_bound; }
+    
+    
 };

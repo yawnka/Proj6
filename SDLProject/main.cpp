@@ -1,12 +1,3 @@
-/**
-* Author: Yanka Sikder
-* Assignment: Platformer
-* Date due: 2023-11-26, 11:59pm
-* I pledge that I have completed this assignment without
-* collaborating with anyone else, in conformance with the
-* NYU School of Engineering Policies and Procedures on
-* Academic Misconduct.
-**/
 #define GL_SILENCE_DEPRECATION
 #define GL_GLEXT_PROTOTYPES 1
 #define FIXED_TIMESTEP 0.0166666f
@@ -69,7 +60,7 @@ End *g_end;
 
 
 Effects *g_effects;
-Scene   *g_levels[4];
+Scene   *g_levels[2];
 
 SDL_Window* g_display_window;
 
@@ -130,14 +121,14 @@ void initialise() {
 
     g_main_menu = new MainMenu();
     g_levelA = new LevelA();
-    g_levelB = new LevelB();
-    g_levelC = new LevelC();
+//    g_levelB = new LevelB();
+//    g_levelC = new LevelC();
     g_end = new End();
 
     g_levels[0] = g_levelA;
-    g_levels[1] = g_levelB;
-    g_levels[2] = g_levelC;
-    g_levels[3] = g_end;
+//    g_levels[1] = g_levelB;
+//    g_levels[2] = g_levelC;
+    g_levels[1] = g_end;
 
     //g_effects = new Effects(g_projection_matrix, g_view_matrix);
     // Start at MainMenu
@@ -167,17 +158,6 @@ void process_input()
                 {
                     case SDLK_q:
                         g_app_status = TERMINATED;
-                        break;
-
-                    case SDLK_SPACE:
-                        // Jump if a player exists and is on the ground
-                        if (g_app_status == RUNNING &&
-                            g_current_scene->get_state().player &&
-                            g_current_scene->get_state().player->get_collided_bottom())
-                        {
-                            g_current_scene->get_state().player->jump();
-                            Mix_PlayChannel(-1, g_current_scene->get_state().jump_sfx, 0);
-                        }
                         break;
 
                     case SDLK_p: // EXTRA CREDIT PSEUO MENU SCREEN FOR PAUSE WITH KEY PRESS P
@@ -211,10 +191,18 @@ void process_input()
         g_current_scene->get_state().player->set_movement(glm::vec3(0.0f));
 
         const Uint8 *key_state = SDL_GetKeyboardState(NULL);
-        if (key_state[SDL_SCANCODE_LEFT])
+        if (key_state[SDL_SCANCODE_LEFT]) {
             g_current_scene->get_state().player->move_left();
-        else if (key_state[SDL_SCANCODE_RIGHT])
+        }
+        if (key_state[SDL_SCANCODE_RIGHT]) {
             g_current_scene->get_state().player->move_right();
+        }
+        if (key_state[SDL_SCANCODE_UP]) {
+            g_current_scene->get_state().player->move_up();
+        }
+        if (key_state[SDL_SCANCODE_DOWN]) {
+            g_current_scene->get_state().player->move_down();
+        }
 
         if (glm::length(g_current_scene->get_state().player->get_movement()) > 1.0f)
             g_current_scene->get_state().player->normalise_movement();
@@ -251,19 +239,6 @@ void update()
     if (g_current_scene->get_state().player)
     {
         player_pos = g_current_scene->get_state().player->get_position();
-        // player loses a life for falling through gaps in the game
-        if (player_pos.y < -8.0f)
-        {
-            curr_lives -= 1;
-            if (curr_lives <= 0)
-            {
-                g_app_status = PAUSED;
-            }
-            else
-            {
-                g_current_scene->get_state().player->set_position(player_initial_position);
-            }
-        }
     }
 
     while (delta_time >= FIXED_TIMESTEP)
@@ -372,30 +347,27 @@ void update()
     g_accumulator = delta_time;
 
     // Prevent the camera from showing anything outside of the "edge" of the level
-    g_view_matrix = glm::mat4(1.0f);
+    //g_view_matrix = glm::mat4(1.0f);
 
+    // Center the camera on the player without clamping to boundaries
     if (g_current_scene->get_state().player)
     {
-        float player_x = g_current_scene->get_state().player->get_position().x;
-        float map_right_edge = g_current_scene->get_state().map->get_width() * 1.0f;
-        float camera_right_limit = map_right_edge - 5.5f;
-        float camera_x = -player_x;
-        
-        if (-camera_x > camera_right_limit)
-        {
-            camera_x = -camera_right_limit; // Stop at the map's rightmost edge
-        }
-        else if (player_x < LEVEL1_LEFT_EDGE)
-        {
-            camera_x = -LEVEL1_LEFT_EDGE; // Stop at the map's leftmost edge
-        }
+        glm::vec3 player_pos = g_current_scene->get_state().player->get_position();
 
-        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(camera_x, 3.50, 0));
+        // Update the view matrix to center on the player
+        float camera_x = -player_pos.x;
+        float camera_y = -player_pos.y;
+        g_view_matrix = glm::mat4(1.0f);
+        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(camera_x, camera_y, 0));
+
+        // Set the spotlight to follow the player's position
+        g_shader_program.set_light_position_matrix(player_pos); // Ensure this function sets the light position in the shader
     }
     else
     {
-        // Default camera position if no player exists
-        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-5, 3.75, 0));
+        // Default camera and light position if no player exists
+        g_view_matrix = glm::translate(glm::mat4(1.0f), glm::vec3(-5.0f, 3.75f, 0.0f));
+        g_shader_program.set_light_position_matrix(glm::vec3(0.0f, 0.0f, 0.0f)); // Default light position
     }
 
 
@@ -406,22 +378,15 @@ void update()
         case 0:
             switch_to_scene(g_levelA);
             break;
-        case 1:
-            switch_to_scene(g_levelB);
-            break;
-        case 2:
-            switch_to_scene(g_levelC);
-            break;
+//        case 1:
+//            switch_to_scene(g_levelB);
+//            break;
+//        case 2:
+//            switch_to_scene(g_levelC);
+//            break;
         default:
             break;
         }
-    }
-
-    //g_view_matrix = glm::translate(g_view_matrix, g_effects->get_view_offset());
-    if (g_current_scene->get_state().player)
-    {
-        g_view_matrix = glm::translate(g_view_matrix, g_effects->get_view_offset());
-        g_shader_program.set_light_position_matrix(g_current_scene->get_state().player->get_position());
     }
 }
 

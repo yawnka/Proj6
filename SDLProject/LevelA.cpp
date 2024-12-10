@@ -1,17 +1,9 @@
-/**
-* Author: Yanka Sikder
-* Assignment: Platformer
-* Date due: 2023-11-26, 11:59pm
-* I pledge that I have completed this assignment without
-* collaborating with anyone else, in conformance with the
-* NYU School of Engineering Policies and Procedures on
-* Academic Misconduct.
-**/
 #include "LevelA.h"
 #include "Utility.h"
+#include "tinyxml2.h"
 
-#define LEVEL_WIDTH 22
-#define LEVEL_HEIGHT 8
+#define LEVEL_WIDTH 32
+#define LEVEL_HEIGHT 32
 
 constexpr char SPRITESHEET_FILEPATH[] = "assets/player0.png",
            ENEMY_FILEPATH[]       = "assets/enemy.png";
@@ -55,8 +47,11 @@ void LevelA::initialise()
     m_number_of_enemies = 2;
     m_game_state.next_scene_id = -1;
     
-    GLuint map_texture_id = Utility::load_texture("assets/tileset_summer2.png");
-    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELA_DATA, map_texture_id, 1.0f,6, 1);
+    GLuint map_texture_id = Utility::load_texture("assets/mainlevbuild.png");
+    m_game_state.map = new Map("assets/map1.tmx", map_texture_id, 16.0f, 64, 40);
+
+    //GLuint map_texture_id = Utility::load_texture("assets/tileset_summer2.png");
+    //m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELA_DATA, map_texture_id, 1.0f,6, 1);
     
     // Code from main.cpp's initialise()
     /**
@@ -71,7 +66,7 @@ void LevelA::initialise()
         { 12, 13, 14, 15 }   // for PLAYER to move downwards
     };
 
-    glm::vec3 acceleration = glm::vec3(0.0f, -4.81f, 0.0f);
+    glm::vec3 acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
     
     GLuint player_texture_id = Utility::load_texture(SPRITESHEET_FILEPATH);
     
@@ -108,7 +103,7 @@ void LevelA::initialise()
         {12, 13, 14, 15} // Down
     };
     m_game_state.enemies = new Entity[ENEMY_COUNT];
-    glm::vec3 enemy_acceleration = glm::vec3(0.0f, -2.905f, 0.0f);
+    glm::vec3 enemy_acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
 
     m_game_state.enemies = new Entity[ENEMY_COUNT];
 
@@ -130,10 +125,10 @@ void LevelA::initialise()
         );
         m_game_state.enemies[i].m_visual_scale = 1.0f; // scale of enemies
     }
-    m_game_state.enemies[0].set_position(glm::vec3(8.0f, 0.0f, 0.0f));
-    m_game_state.enemies[0].set_ai_type(GUARD);
-    m_game_state.enemies[0].set_ai_state(IDLE);
-    m_game_state.enemies[0].set_jumping_power(2.0f);
+    m_game_state.enemies[0].set_position(glm::vec3(8.0f, -3.0f, 0.0f));
+    m_game_state.enemies[0].set_ai_type(PATROL);
+    m_game_state.enemies[0].set_ai_state(PATROLLING);
+    m_game_state.enemies[0].set_speed(1.5f);
     
     m_game_state.enemies[1].set_position(glm::vec3(16.0f, -5.125f, 0.0f));
     m_game_state.enemies[1].set_ai_type(PATROL);
@@ -185,9 +180,15 @@ void LevelA::update(float delta_time)
 void LevelA::render(ShaderProgram *program)
 {
     glClearColor(0.53f, 0.81f, 0.92f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    m_game_state.map->render(program);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+    // Render all layers of the map
+    for (int i = 0; i < m_game_state.map->get_layer_count(); ++i) {
+        m_game_state.map->render_layer(program, i);
+    }
+
     m_game_state.player->render(program);
-    for (int i = 0; i < m_number_of_enemies; i++)
-            m_game_state.enemies[i].render(program);
+    for (int i = 0; i < m_number_of_enemies; ++i) {
+        m_game_state.enemies[i].render(program);
+    }
 }
