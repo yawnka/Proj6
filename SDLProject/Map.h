@@ -34,11 +34,13 @@ private:
     std::vector<std::vector<unsigned int>> m_layers;
     
 public:
-    Map(const char* tmx_file, GLuint texture_id, float tile_size, int tile_count_x, int tile_count_y);
+    Map(GLuint texture_id, float tile_size, int tile_count_x, int tile_count_y,
+        const std::vector<unsigned int>& layer1, const std::vector<unsigned int>& layer2);
     void render(ShaderProgram *program);
     bool is_solid(glm::vec3 position, float *penetration_x, float *penetration_y);
     void build(); // Build vertices and texture coordinates for rendering
     void render_layer(ShaderProgram* program, int layer_index);
+
     
     // Getters
     int const get_width()  const  { return this->m_width;  }

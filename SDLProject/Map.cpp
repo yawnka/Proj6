@@ -1,54 +1,37 @@
 #include "Map.h"
 
-Map::Map(const char* tmx_file, GLuint texture_id, float tile_size, int tile_count_x, int tile_count_y)
+Map::Map(GLuint texture_id, float tile_size, int tile_count_x, int tile_count_y,
+         const std::vector<unsigned int>& layer1, const std::vector<unsigned int>& layer2)
     : m_texture_id(texture_id), m_tile_size(tile_size), m_tile_count_x(tile_count_x), m_tile_count_y(tile_count_y) {
+    m_width = 32;  // Replace with your map's width
+    m_height = 32; // Replace with your map's height
 
-    tinyxml2::XMLDocument doc;
-    if (doc.LoadFile(tmx_file) != tinyxml2::XML_SUCCESS) {
-        std::cerr << "Failed to load TMX file: " << tmx_file << std::endl;
-        return;
-    }
+    // Store layers in the internal vector
+    m_layers.push_back(layer1); // First layer
+    m_layers.push_back(layer2); // Second layer
 
-    auto mapElement = doc.FirstChildElement("map");
-    m_width = mapElement->IntAttribute("width");
-    m_height = mapElement->IntAttribute("height");
-
-    auto layerElement = mapElement->FirstChildElement("layer");
-    while (layerElement) {
-        auto dataElement = layerElement->FirstChildElement("data");
-        std::string data = dataElement->GetText();
-
-        // Decode CSV layer data
-        std::vector<unsigned int> layer_data;
-        std::stringstream ss(data);
-        std::string token;
-        while (std::getline(ss, token, ',')) {
-            layer_data.push_back(std::stoi(token));
-        }
-
-        m_layers.push_back(layer_data); // Store layer data
-        layerElement = layerElement->NextSiblingElement("layer");
-    }
-
+    // Build the map based on these layers
     build();
 }
-
 
 void Map::build() {
     for (int layer = 0; layer < m_layers.size(); ++layer) {
         for (int y = 0; y < m_height; ++y) {
             for (int x = 0; x < m_width; ++x) {
-                int tile = m_layers[layer][y * m_width + x];
-                if (tile == 0) continue;
+                int tile = m_layers[layer][y * m_width + x] - 1; // Adjust for 1-based indexing
+                if (tile < 0) continue;
 
-                float u = (float)(tile % m_tile_count_x) / m_tile_count_x;
-                float v = (float)(tile / m_tile_count_x) / m_tile_count_y;
+                // Calculate UV coordinates
+                float tile_width = 1.0f / m_tile_count_x; // 1.0f / 64
+                float tile_height = 1.0f / m_tile_count_y; // 1.0f / 40
 
-                float tile_width = 1.0f / m_tile_count_x;
-                float tile_height = 1.0f / m_tile_count_y;
+                float u = (tile % m_tile_count_x) * tile_width;
+                float v = (tile / m_tile_count_x) * tile_height;
 
                 float x_offset = -(m_tile_size / 2);
                 float y_offset = (m_tile_size / 2);
+                
+                std::cout << "Tile: " << tile << ", U: " << u << ", V: " << v << std::endl;
 
                 m_vertices.insert(m_vertices.end(), {
                     x_offset + (m_tile_size * x), y_offset + -(m_tile_size * y),
@@ -71,6 +54,7 @@ void Map::build() {
         }
     }
 }
+
 
 
 void Map::render(ShaderProgram *program)
