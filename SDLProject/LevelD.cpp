@@ -316,8 +316,8 @@ void LevelD::update(float delta_time)
 
     float transition_min_x = 29.0f;
     float transition_max_x = 29.5f;
-    float transition_min_y = -3.3f;
-    float transition_max_y = -1.5f;
+    float transition_min_y = -24.3f;
+    float transition_max_y = -23.1f;
 
     // Get the player's current position
     glm::vec3 player_position = m_game_state.player->get_position();

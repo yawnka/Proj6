@@ -79,24 +79,30 @@ bool g_is_colliding_bottom = false;
 int curr_lives = 3;
 glm::vec3 player_initial_position;
 
-int NUM_ITEMS = 11;
+int NUM_ITEMS = 28; //4+6+8+10 (per lvl)
 int g_items_collected = 0;
+int g_current_scene_index = 0;
 
 // ––––– GENERAL FUNCTIONS ––––– //
-void switch_to_scene(Scene *scene)
-{
-    // unfortunately the effects did not work as I wanted it to for extra credit, but I implemented
-    // a baisc effect in the initialise function at the beginning for it!
-//    g_effects = new Effects(g_projection_matrix, g_view_matrix);
-//    g_effects->start(FADEOUT, 2.0f);
+void switch_to_scene(Scene *scene) {
+    if (scene == g_levelA) g_current_scene_index = 0;
+    else if (scene == g_levelB) g_current_scene_index = 1;
+    else if (scene == g_levelC) g_current_scene_index = 2;
+    else if (scene == g_levelD) g_current_scene_index = 3;
+    else if (scene == g_end) g_current_scene_index = 4;
+
+    // Update the currentScene uniform in the shader
+    glUseProgram(g_shader_program.get_program_id());
+    glUniform1i(glGetUniformLocation(g_shader_program.get_program_id(), "currentScene"), g_current_scene_index);
+
     if (scene == g_end) {
-        static_cast<End*>(g_end)->set_items_collected(g_items_collected);
+        static_cast<End *>(g_end)->set_items_collected(g_items_collected);
     }
+
     g_current_scene = scene;
     g_current_scene->initialise(); // DON'T FORGET THIS STEP!
-//    g_effects = new Effects(g_projection_matrix, g_view_matrix);
-//    g_effects->start(FADEIN, 2.0f);
 }
+
 
 
 void initialise() {
@@ -453,8 +459,18 @@ void render()
     g_shader_program.set_view_matrix(g_view_matrix);
     glUseProgram(g_shader_program.get_program_id());
 
+    // Update the currentScene uniform
+    glUniform1i(glGetUniformLocation(g_shader_program.get_program_id(), "currentScene"), g_current_scene_index);
+
+    // Update the lightPosition uniform for scenes 2 and 3
+    if (g_current_scene_index == 2 || g_current_scene_index == 3) {
+        glm::vec3 playerPos = g_current_scene->get_state().player->get_position();
+        glUniform2f(glGetUniformLocation(g_shader_program.get_program_id(), "lightPosition"), playerPos.x, playerPos.y);
+    }
+
     // Render the current scene (map, player, enemies)
     g_current_scene->render(&g_shader_program);
+
 
     if (g_current_scene->get_state().player)
     {
