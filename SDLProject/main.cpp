@@ -396,13 +396,13 @@ void update()
         g_view_matrix = glm::translate(g_view_matrix, glm::vec3(camera_x, camera_y, 0));
 
         // Set the spotlight to follow the player's position
-        g_shader_program.set_light_position_matrix(player_pos); // Ensure this function sets the light position in the shader
+        //g_shader_program.set_light_position_matrix(player_pos); // Ensure this function sets the light position in the shader
     }
     else
     {
         // Default camera and light position if no player exists
         g_view_matrix = glm::translate(glm::mat4(1.0f), glm::vec3(-5.0f, 3.75f, 0.0f));
-        g_shader_program.set_light_position_matrix(glm::vec3(0.0f, 0.0f, 0.0f)); // Default light position
+        //g_shader_program.set_light_position_matrix(glm::vec3(0.0f, 0.0f, 0.0f)); // Default light position
     }
 
 

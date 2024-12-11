@@ -22,6 +22,12 @@ void Map::build() {
 
             // Adjust for one-based tile indexing
             int tile_index = tile - 1;
+            
+            if (tile >= 305) {
+                tile_index = tile - 305; // Offset for the second tileset
+            } else {
+                tile_index = tile - 1; // Offset for the first tileset
+            }
 
             // UV coordinates
             float u_coord = (float)(tile_index % m_tile_count_x) / (float)m_tile_count_x;
@@ -149,10 +155,14 @@ bool Map::is_solid(glm::vec3 position, float *penetration_x, float *penetration_
     if (tile_x < 0 || tile_x >= m_width) return false;
     if (tile_y < 0 || tile_y >= m_height) return false;
 
-    // Check the first layer
+    // Get the tile from the first layer
     int tile = m_level_data[tile_y * m_width + tile_x];
 
-    // Check the second layer if available
+    // If there's a second layer, check it for non-zero tiles
+    int second_layer_tile = 0;
+//    if (m_second_layer_data) {
+//        second_layer_tile = m_second_layer_data[tile_y * m_width + tile_x];
+//    }
     if (m_second_layer_data) {
         int second_layer_tile = m_second_layer_data[tile_y * m_width + tile_x];
 
@@ -161,16 +171,54 @@ bool Map::is_solid(glm::vec3 position, float *penetration_x, float *penetration_
         }
     }
 
-    // Define the set of solid tiles
-    const std::set<int> solid_tiles = {21, 22, 23, 24, 26, 106, 28, 78, 79, 80, 50};
+    // Tile IDs for tileset offsets
+    const int tileset1_firstgid = 1;
+    const int tileset2_firstgid = 305;
 
-    if (solid_tiles.find(tile) != solid_tiles.end()) {
-        float tile_center_x = (tile_x * m_tile_size);
-        float tile_center_y = -(tile_y * m_tile_size);
+    const std::set<int> tileset1_solid_tiles = {21, 22, 23, 24, 26, 106, 28, 78, 79, 80, 50};
+    const std::set<int> tileset2_solid_tiles = {970 - 305, 826 - 305, 818 - 305, 899 - 305, 857 - 305,
+                                                964 - 305, 962 - 305, 904 - 305, 932 - 305, 942 - 305,
+                                                999 - 305, 1018 - 305, 858 - 305, 938 - 305, 1001 - 305,
+                                                1020 - 305, 980 - 305, 825 - 305, 973 - 305, 1039 - 305,
+                                                940 - 305, 937 - 305, 971 - 305, 825 - 305, 964 - 305};
 
-        *penetration_x = (m_tile_size / 2) - fabs(position.x - tile_center_x);
-        *penetration_y = (m_tile_size / 2) - fabs(position.y - tile_center_y);
-        return true;
+    // Check if the tile belongs to tileset2
+    if (tile >= tileset2_firstgid) {
+        int relative_tile = tile - tileset2_firstgid; // Calculate relative ID for tileset2
+        if (tileset2_solid_tiles.find(relative_tile) != tileset2_solid_tiles.end()) {
+            float tile_center_x = (tile_x * m_tile_size);
+            float tile_center_y = -(tile_y * m_tile_size);
+
+            *penetration_x = (m_tile_size / 2) - fabs(position.x - tile_center_x);
+            *penetration_y = (m_tile_size / 2) - fabs(position.y - tile_center_y);
+            return true;
+        }
+    }
+
+    // Check if the tile belongs to tileset1
+    if (tile >= tileset1_firstgid && tile < tileset2_firstgid) {
+        if (tileset1_solid_tiles.find(tile) != tileset1_solid_tiles.end()) {
+            float tile_center_x = (tile_x * m_tile_size);
+            float tile_center_y = -(tile_y * m_tile_size);
+
+            *penetration_x = (m_tile_size / 2) - fabs(position.x - tile_center_x);
+            *penetration_y = (m_tile_size / 2) - fabs(position.y - tile_center_y);
+            return true;
+        }
+        return false;
+    }
+
+    // Check the second layer for tileset2
+    if (second_layer_tile >= tileset2_firstgid) {
+        int relative_tile = second_layer_tile - tileset2_firstgid; // Calculate relative ID for tileset2
+        if (tileset2_solid_tiles.find(relative_tile) != tileset2_solid_tiles.end()) {
+            float tile_center_x = (tile_x * m_tile_size);
+            float tile_center_y = -(tile_y * m_tile_size);
+
+            *penetration_x = (m_tile_size / 2) - fabs(position.x - tile_center_x);
+            *penetration_y = (m_tile_size / 2) - fabs(position.y - tile_center_y);
+            return true;
+        }
     }
     return false;
 }
