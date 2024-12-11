@@ -86,8 +86,6 @@ LevelD::~LevelD()
     delete    m_game_state.player;
     delete    m_game_state.map;
     delete[] m_game_state.items;
-//    Mix_FreeChunk(m_game_state.jump_sfx);
-//    Mix_FreeMusic(m_game_state.bgm);
     if (m_game_state.jump_sfx)
     {
         Mix_FreeChunk(m_game_state.jump_sfx);
@@ -201,10 +199,6 @@ void LevelD::initialise()
               << player_initial_position.x << ", "
               << player_initial_position.y << ", "
               << player_initial_position.z << std::endl;
-
-    // Jumping
-    m_game_state.player->set_jumping_power(5.0f);
-    
     /**
     Enemies' stuff */
     GLuint enemy_texture_id = Utility::load_texture(ENEMY_FILEPATH);

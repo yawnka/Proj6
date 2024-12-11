@@ -170,12 +170,8 @@ void initialise() {
 //        std::cout << "Failed to load death sound effect: " << Mix_GetError() << std::endl;
 //    }
     level_complete_sfx = Mix_LoadWAV("assets/level_complete.wav");
-    //g_effects = new Effects(g_projection_matrix, g_view_matrix);
-    // Start at MainMenu
     switch_to_scene(g_main_menu);
     g_effects = new Effects(g_projection_matrix, g_view_matrix);
-    //g_effects->start(SHRINK, 1.5f);
-    //g_effects->start(FADEIN, 4.0f);
     player_initial_position = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
@@ -200,14 +196,14 @@ void process_input()
                         g_app_status = TERMINATED;
                         break;
 
-                    case SDLK_p: // EXTRA CREDIT PSEUO MENU SCREEN FOR PAUSE WITH KEY PRESS P
+                    case SDLK_p: // psuedo pause screen
                         if (g_app_status == RUNNING)
                         {
                             g_app_status = PAUSED;
                         }
                         break;
 
-                    case SDLK_RETURN: // Enter key to handle on/off for pause screen
+                    case SDLK_RETURN:
                         if (g_app_status == PAUSED)
                         {
                             g_app_status = RUNNING;
@@ -387,7 +383,6 @@ void update()
                         {
                             curr_lives -= 1;
                             Mix_PlayChannel(-1, death_sfx, 0);
-                            // Fetch the initial position dynamically from the current scene
                             if (dynamic_cast<LevelA*>(g_current_scene)) {
                                 player_initial_position = static_cast<LevelA*>(g_current_scene)->get_player_initial_position();
                             } else if (dynamic_cast<LevelB*>(g_current_scene)) {
@@ -450,7 +445,7 @@ void update()
     {
         // Default camera and light position if no player exists
         g_view_matrix = glm::translate(glm::mat4(1.0f), glm::vec3(-5.0f, 3.75f, 0.0f));
-        //g_shader_program.set_light_position_matrix(glm::vec3(0.0f, 0.0f, 0.0f)); // Default light position
+        //g_shader_program.set_light_position_matrix(glm::vec3(0.0f, 0.0f, 0.0f)); // Default light position removed and only used in scene 3
     }
 
 

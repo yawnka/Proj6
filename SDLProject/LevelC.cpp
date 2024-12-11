@@ -86,13 +86,6 @@ LevelC::~LevelC()
     delete    m_game_state.player;
     delete    m_game_state.map;
     delete[] m_game_state.items;
-//    Mix_FreeChunk(m_game_state.jump_sfx);
-//    Mix_FreeMusic(m_game_state.bgm);
-    if (m_game_state.jump_sfx)
-    {
-        Mix_FreeChunk(m_game_state.jump_sfx);
-        m_game_state.jump_sfx = nullptr;
-    }
 
     if (m_game_state.bgm)
     {
@@ -197,9 +190,6 @@ void LevelC::initialise()
               << player_initial_position.x << ", "
               << player_initial_position.y << ", "
               << player_initial_position.z << std::endl;
-
-    // Jumping
-    m_game_state.player->set_jumping_power(5.0f);
     
     /**
     Enemies' stuff */
@@ -287,8 +277,6 @@ void LevelC::initialise()
         Mix_PlayMusic(m_game_state.bgm, -1); // Play music in a loop
         Mix_VolumeMusic(MIX_MAX_VOLUME / 2); // Set volume to 50% of the max
     }
-    
-    m_game_state.jump_sfx = Mix_LoadWAV("assets/jump.wav");
 }
 
 void LevelC::update(float delta_time)

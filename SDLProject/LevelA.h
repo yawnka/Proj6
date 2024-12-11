@@ -12,7 +12,7 @@ public:
     void update(float delta_time) override;
     void render(ShaderProgram *program) override;
 
-    glm::vec3 get_player_initial_position() const; // Getter for initial position
+    glm::vec3 get_player_initial_position() const;
 
 private:
     glm::vec3 player_initial_position = glm::vec3(10.5f, -10.0f, 0.0f); // Initial position

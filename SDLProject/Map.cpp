@@ -61,7 +61,6 @@ void Map::build() {
         }
     }
 
-    // Bounds
     m_left_bound = 0 - (m_tile_size / 2);
     m_right_bound = (m_tile_size * m_width) - (m_tile_size / 2);
     m_top_bound = 0 + (m_tile_size / 2);
@@ -172,6 +171,7 @@ bool Map::is_solid(glm::vec3 position, float *penetration_x, float *penetration_
     const int tileset2_firstgid = 305;
 
     const std::set<int> tileset1_solid_tiles = {21, 22, 23, 24, 26, 106, 28, 78, 79, 80, 50};
+    // this whole thing is happening because of some dumb issue with tiled randomly incorporating two tilesets in one.. like what??
     const std::set<int> tileset2_solid_tiles = {970 - 305, 826 - 305, 818 - 305, 899 - 305, 857 - 305,
                                                 964 - 305, 962 - 305, 904 - 305, 932 - 305, 942 - 305,
                                                 999 - 305, 1018 - 305, 858 - 305, 938 - 305, 1001 - 305,
@@ -191,7 +191,7 @@ bool Map::is_solid(glm::vec3 position, float *penetration_x, float *penetration_
         }
     }
 
-    // Check if the tile belongs to tileset1
+    // Check if the tile belongs to tileset1 + this handles layer 2 as well.
     if (tile >= tileset1_firstgid && tile < tileset2_firstgid) {
         if (tileset1_solid_tiles.find(tile) != tileset1_solid_tiles.end()) {
             float tile_center_x = (tile_x * m_tile_size);
