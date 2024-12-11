@@ -81,7 +81,12 @@ glm::vec3 player_initial_position;
 
 int NUM_ITEMS = 28; //4+6+8+10 (per lvl)
 int g_items_collected = 0;
+
+// for shader
 int g_current_scene_index = 0;
+
+// for audio
+Mix_Chunk* collect_item_sfx = nullptr;
 
 // ––––– GENERAL FUNCTIONS ––––– //
 void switch_to_scene(Scene *scene) {
@@ -145,6 +150,15 @@ void initialise() {
     g_levels[3] = g_levelD;
     g_levels[4] = g_end;
 
+    
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) == -1) {
+        std::cout << "Error initializing SDL_mixer: " << Mix_GetError() << std::endl;
+    }
+    // Load the collect item sound effect
+    collect_item_sfx = Mix_LoadWAV("assets/collect_item.wav");
+    if (!collect_item_sfx) {
+        std::cout << "Failed to load collect item sound effect: " << Mix_GetError() << std::endl;
+    }
     //g_effects = new Effects(g_projection_matrix, g_view_matrix);
     // Start at MainMenu
     switch_to_scene(g_main_menu);
@@ -283,6 +297,7 @@ void update()
                 {
                     g_items_collected++;
                     item.deactivate();
+                    Mix_PlayChannel(-1, collect_item_sfx, 0);
                     g_current_scene->get_state().num_items_collected++;
                 }
             }
@@ -534,9 +549,13 @@ void render()
 void shutdown()
 {
     SDL_Quit();
+    if (collect_item_sfx) {
+        Mix_FreeChunk(collect_item_sfx);
+        collect_item_sfx = nullptr;
+    }
     delete g_main_menu;
-//    delete g_levelA;
-//    delete g_levelB;
+    delete g_levelA;
+    delete g_levelB;
     delete g_levelC;
     delete g_levelD;
     delete g_effects;
