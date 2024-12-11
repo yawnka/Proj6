@@ -241,14 +241,11 @@ void LevelC::initialise()
     m_game_state.enemies[2].set_ai_state(PATROLLING);
     m_game_state.enemies[2].set_movement(glm::vec3(-1.0f, 0.0f, 0.0f));
     m_game_state.enemies[2].set_speed(1.5f);
+
     
-    m_game_state.enemies[2].set_position(glm::vec3(15.0f, -11.0f, 0.0f));
-    m_game_state.enemies[2].set_ai_type(PATROL);
-    m_game_state.enemies[2].set_ai_state(PATROLLING);
-    m_game_state.enemies[2].set_movement(glm::vec3(-1.0f, 0.0f, 0.0f));
-    m_game_state.enemies[2].set_speed(1.5f);
-    
-    m_game_state.enemies[3].set_position(glm::vec3(13.0f, -13.0f, 0.0f));
+    //m_game_state.enemies[3].set_position(glm::vec3(13.0f, -13.0f, 0.0f));
+    m_game_state.enemies[3].set_position(glm::vec3(8.0f, -17.0f, 0.0f));
+    m_game_state.enemies[3].set_walking(enemy_walking_animation);
     m_game_state.enemies[3].set_ai_type(SHOOTER);
     m_game_state.enemies[3].set_ai_state(SHOOTING);
     m_game_state.enemies[3].set_jumping_power(2.0f);
@@ -282,10 +279,10 @@ void LevelC::update(float delta_time)
 {
     m_game_state.player->update(delta_time, m_game_state.player, m_game_state.enemies, ENEMY_COUNT, m_game_state.map);
     
-    for (int i = 0; i < m_number_of_enemies; i++)
-    {
-        m_game_state.enemies[i].update(delta_time, m_game_state.player, NULL, NULL, m_game_state.map);
+    for (int i = 0; i < m_number_of_enemies; i++) {
+        m_game_state.enemies[i].update(delta_time, m_game_state.player, nullptr, 0, m_game_state.map);
     }
+
 
     // Define the region for transitioning to the next scene
     float transition_min_x = 23.0f;   // Minimum x coordinate
