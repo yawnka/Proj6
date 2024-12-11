@@ -248,18 +248,19 @@ void LevelD::initialise()
     m_game_state.enemies[1].set_movement(glm::vec3(-1.0f, 0.0f, 0.0f));
     m_game_state.enemies[1].set_speed(1.5f);
 
+    
     m_game_state.enemies[2].set_position(glm::vec3(18.88f, -14.3f, 0.0f));
     m_game_state.enemies[2].set_walking(enemy_walking_animation);
     m_game_state.enemies[2].set_ai_type(SHOOTER);
     m_game_state.enemies[2].set_ai_state(SHOOTING);
-    GLuint projectile_texture1 = Utility::load_texture("assets/bullet.png");
-    m_game_state.enemies[2].set_projectile_texture(projectile_texture1);
+    GLuint projectile_texture2 = Utility::load_texture("assets/bullet2.png");
+    m_game_state.enemies[2].set_projectile_texture(projectile_texture2);
     
     m_game_state.enemies[3].set_position(glm::vec3(18.88f, -15.3f, 0.0f));
     m_game_state.enemies[3].set_walking(enemy_walking_animation);
     m_game_state.enemies[3].set_ai_type(SHOOTER);
     m_game_state.enemies[3].set_ai_state(SHOOTING);
-    m_game_state.enemies[3].set_projectile_texture(projectile_texture1);
+    m_game_state.enemies[3].set_projectile_texture(projectile_texture2);
     
     m_game_state.enemies[4].set_position(glm::vec3(23.47f, -20.1f, 0.0f));
     m_game_state.enemies[4].set_ai_type(GUARD);
@@ -275,6 +276,7 @@ void LevelD::initialise()
     m_game_state.enemies[6].set_walking(enemy_walking_animation);
     m_game_state.enemies[6].set_ai_type(SHOOTER);
     m_game_state.enemies[6].set_ai_state(SHOOTING);
+    GLuint projectile_texture1 = Utility::load_texture("assets/bullet.png");
     m_game_state.enemies[6].set_projectile_texture(projectile_texture1);
     
     m_game_state.enemies[7].set_position(glm::vec3(22.01f, -12.1f, 0.0f));

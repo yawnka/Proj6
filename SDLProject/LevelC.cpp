@@ -255,7 +255,8 @@ void LevelC::initialise()
     m_game_state.enemies[3].set_walking(enemy_walking_animation);
     m_game_state.enemies[3].set_ai_type(SHOOTER);
     m_game_state.enemies[3].set_ai_state(SHOOTING);
-    m_game_state.enemies[3].set_projectile_texture(projectile_texture1);
+    GLuint projectile_texture2 = Utility::load_texture("assets/bullet2.png");
+    m_game_state.enemies[3].set_projectile_texture(projectile_texture2);
     
     m_game_state.enemies[4].set_position(glm::vec3(22.0f, -7.2f, 0.0f));
     m_game_state.enemies[4].set_ai_type(GUARD);
