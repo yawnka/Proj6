@@ -87,6 +87,9 @@ void switch_to_scene(Scene *scene)
     // a baisc effect in the initialise function at the beginning for it!
 //    g_effects = new Effects(g_projection_matrix, g_view_matrix);
 //    g_effects->start(FADEOUT, 2.0f);
+    if (scene == g_end) {
+        static_cast<End*>(g_end)->set_items_collected(g_items_collected);
+    }
     g_current_scene = scene;
     g_current_scene->initialise(); // DON'T FORGET THIS STEP!
 //    g_effects = new Effects(g_projection_matrix, g_view_matrix);
@@ -96,7 +99,7 @@ void switch_to_scene(Scene *scene)
 
 void initialise() {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
-    g_display_window = SDL_CreateWindow("Adventurer Tale",
+    g_display_window = SDL_CreateWindow("Where's the Loot?",
                                         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                         WINDOW_WIDTH, WINDOW_HEIGHT,
                                         SDL_WINDOW_OPENGL);
@@ -416,6 +419,9 @@ void update()
         case 2:
             switch_to_scene(g_levelC);
             break;
+        case 3:
+            switch_to_scene(g_end);
+            break;
         default:
             break;
         }
@@ -442,7 +448,7 @@ void render()
 
         Utility::draw_text(&g_shader_program, Utility::load_texture("assets/font1.png"), livesText, 0.4f, 0.05f, message_position);
         
-        std::string itemsText = "ITEMS: " + std::to_string(g_items_collected);
+        std::string itemsText = "LOOT: " + std::to_string(g_items_collected);
         glm::vec3 items_position = glm::vec3(-4.5f, 2.6f, 0.0f);
         Utility::draw_text(&g_shader_program, Utility::load_texture("assets/font1.png"), itemsText, 0.4f, 0.05f, items_position);
 
