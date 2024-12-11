@@ -239,6 +239,7 @@ void update()
     if (g_current_scene->get_state().player)
     {
         player_pos = g_current_scene->get_state().player->get_position();
+        //std::cout << "Player position: " << player_pos.x << " , " << player_pos.y << std::endl;
     }
 
     while (delta_time >= FIXED_TIMESTEP)

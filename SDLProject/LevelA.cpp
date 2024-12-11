@@ -207,13 +207,28 @@ void LevelA::update(float delta_time)
     {
         m_game_state.enemies[i].update(delta_time, m_game_state.player, NULL, NULL, m_game_state.map);
     }
-    
-    //if (m_game_state.player->get_position().y < -10.0f) m_game_state.next_scene_id = 1;
-    float rightmost_edge = LEVEL_WIDTH * 1.0f;
-    if (m_game_state.player->get_position().x > rightmost_edge)
+
+    // Define the region for transitioning to the next scene
+    float transition_min_x = 23.0f;   // Minimum x coordinate
+    float transition_max_x = 25.0f;   // Maximum x coordinate
+    float transition_min_y = -19.5f;  // Minimum y coordinate
+    float transition_max_y = -17.0f;  // Maximum y coordinate
+
+    // Get the player's current position
+    glm::vec3 player_position = m_game_state.player->get_position();
+
+    // Debugging: Log the player's position
+    std::cout << "Player Position: (" << player_position.x << ", " << player_position.y << ")" << std::endl;
+
+    // Add a small epsilon for floating-point comparison
+    float epsilon = 0.01f;
+
+    // Check if the player is within the transition region
+    if (player_position.x >= transition_min_x - epsilon && player_position.x <= transition_max_x + epsilon &&
+        player_position.y >= transition_min_y - epsilon && player_position.y <= transition_max_y + epsilon)
     {
-        //g_effects->start(FADEOUT, 2.0f); // Optional: Add a fade-out effect before switching scenes
-        m_game_state.next_scene_id = 1;
+        std::cout << "Transitioning to the next scene!" << std::endl; // Debugging message
+        m_game_state.next_scene_id = 1; // Set the next scene ID
     }
 }
 
