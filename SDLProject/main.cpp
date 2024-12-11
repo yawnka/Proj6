@@ -519,8 +519,8 @@ void shutdown()
 {
     SDL_Quit();
     delete g_main_menu;
-    delete g_levelA;
-    delete g_levelB;
+//    delete g_levelA;
+//    delete g_levelB;
     delete g_levelC;
     delete g_levelD;
     delete g_effects;

@@ -103,7 +103,7 @@ LevelC::~LevelC()
 
 void LevelC::initialise()
 {
-    m_number_of_enemies = 5;
+    m_number_of_enemies = 6;
     m_game_state.next_scene_id = -1;
     
     GLuint map_texture_id = Utility::load_texture("assets/mapv2.png");
@@ -126,6 +126,8 @@ void LevelC::initialise()
     item_textures[3] = Utility::load_texture("assets/5.png");
     item_textures[4] = Utility::load_texture("assets/6.png");
     item_textures[5] = Utility::load_texture("assets/8.png");
+    item_textures[6] = Utility::load_texture("assets/10.png");
+    item_textures[7] = Utility::load_texture("assets/11.png");
     
     glm::vec3* item_positions = new glm::vec3[ITEM_COUNT] {
         glm::vec3(5.5f, -11.2f, 0.0f),
@@ -133,7 +135,9 @@ void LevelC::initialise()
         glm::vec3(22.8f, -9.0f, 0.0f),
         glm::vec3(16.8f, -6.0f, 0.0f),
         glm::vec3(7.9f, -19.65f, 0.0f),
-        glm::vec3(25.0f, -17.2f, 0.0f)
+        glm::vec3(25.0f, -17.2f, 0.0f),
+        glm::vec3(9.0f, -19.65f, 0.0f),
+        glm::vec3(22.0f, -17.2f, 0.0f)
     };
     
     m_game_state.items = new Entity[ITEM_COUNT];
@@ -256,6 +260,12 @@ void LevelC::initialise()
     m_game_state.enemies[4].set_position(glm::vec3(22.0f, -7.2f, 0.0f));
     m_game_state.enemies[4].set_ai_type(GUARD);
     m_game_state.enemies[4].set_ai_state(IDLE);
+    
+    m_game_state.enemies[5].set_position(glm::vec3(20.5f, -27.175f, 0.0f));
+    m_game_state.enemies[5].set_ai_type(PATROL);
+    m_game_state.enemies[5].set_ai_state(PATROLLING);
+    m_game_state.enemies[5].set_movement(glm::vec3(-1.0f, 0.0f, 0.0f));
+    m_game_state.enemies[5].set_speed(1.5f);
     
     /**
      BGM and SFX

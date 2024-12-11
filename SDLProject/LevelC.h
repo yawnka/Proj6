@@ -3,8 +3,8 @@
 
 class LevelC : public Scene {
 public:
-    int ENEMY_COUNT = 5;
-    int ITEM_COUNT = 6;
+    int ENEMY_COUNT = 6;
+    int ITEM_COUNT = 8;
 
     ~LevelC();
     
@@ -15,5 +15,5 @@ public:
     glm::vec3 get_player_initial_position() const;
 
 private:
-    glm::vec3 player_initial_position = glm::vec3(7.0f, 0.0f, 0.0f);
+    glm::vec3 player_initial_position = glm::vec3(1.5f, -25.47, 0.0f);
 };
