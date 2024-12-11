@@ -179,7 +179,7 @@ void initialise() {
 //        std::cout << "Failed to load death sound effect: " << Mix_GetError() << std::endl;
 //    }
     level_complete_sfx = Mix_LoadWAV("assets/level_complete.wav");
-    switch_to_scene(g_main_menu);
+    switch_to_scene(g_levelC);
     g_effects = new Effects(g_projection_matrix, g_view_matrix);
     player_initial_position = glm::vec3(0.0f, 0.0f, 0.0f);
 }
@@ -236,16 +236,16 @@ void process_input()
         g_current_scene->get_state().player->set_movement(glm::vec3(0.0f));
 
         const Uint8 *key_state = SDL_GetKeyboardState(NULL);
-        if (key_state[SDL_SCANCODE_LEFT]) {
+        if (key_state[SDL_SCANCODE_A]) {
             g_current_scene->get_state().player->move_left();
         }
-        if (key_state[SDL_SCANCODE_RIGHT]) {
+        if (key_state[SDL_SCANCODE_D]) {
             g_current_scene->get_state().player->move_right();
         }
-        if (key_state[SDL_SCANCODE_UP]) {
+        if (key_state[SDL_SCANCODE_W]) {
             g_current_scene->get_state().player->move_up();
         }
-        if (key_state[SDL_SCANCODE_DOWN]) {
+        if (key_state[SDL_SCANCODE_S]) {
             g_current_scene->get_state().player->move_down();
         }
 

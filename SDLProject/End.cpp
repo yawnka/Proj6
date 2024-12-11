@@ -35,18 +35,18 @@ void End::render(ShaderProgram *program) {
     std::string items_message = std::to_string(m_items_collected);
     Utility::draw_text(program, Utility::load_texture("assets/font1.png"), items_message, 2.0f, 0.02f, total_loot);
     
-    glm::vec3 comment_position = glm::vec3(0.5f, -6.0f, 0.0f);
+    glm::vec3 comment_position = glm::vec3(3.5f, -5.6f, 0.0f);
     std::string comment_message;
 
     if (m_items_collected < 5) {
-        comment_message = "Noob status!";
+        comment_message = "Noob status";
     } else if (m_items_collected > 10 && m_items_collected < 20) {
         comment_message = "Great job!";
     } else if (m_items_collected >= 20) {
         comment_message = "Master looter over here!";
     }
 
-    Utility::draw_text(program, Utility::load_texture("assets/font1.png"), comment_message, 0.6f, 0.02f, comment_position);
+    Utility::draw_text(program, Utility::load_texture("assets/font1.png"), comment_message, 0.4f, 0.02f, comment_position);
 }
 
 void End::set_items_collected(int items_collected) {
