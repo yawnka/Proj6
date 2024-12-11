@@ -44,10 +44,8 @@ void LevelB::initialise()
     m_game_state.next_scene_id = -1;
     m_number_of_enemies = 3;
     
-//    GLuint map_texture_id = Utility::load_texture("assets/tileset_winter.png");
-//    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELB_DATA, map_texture_id, 1.0f,6, 1);
-    GLuint map_texture_id = Utility::load_texture("assets/mainlevbuild.png");
-    m_game_state.map = new Map("assets/map1.tmx", map_texture_id, 16.0f, 64, 40);
+    GLuint map_texture_id = Utility::load_texture("assets/tileset_winter.png");
+    m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELB_DATA, map_texture_id, 1.0f,6, 1);
     
     // Code from main.cpp's initialise()
     /**

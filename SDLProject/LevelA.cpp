@@ -1,9 +1,8 @@
 #include "LevelA.h"
 #include "Utility.h"
-#include "tinyxml2.h"
 
-#define LEVEL_WIDTH 32
-#define LEVEL_HEIGHT 32
+#define LEVEL_WIDTH 30
+#define LEVEL_HEIGHT 30
 
 constexpr char SPRITESHEET_FILEPATH[] = "assets/player0.png",
            ENEMY_FILEPATH[]       = "assets/enemy.png";
@@ -21,6 +20,41 @@ unsigned int LEVELA_DATA[] =
     2, 2, 2, 2, 2, 0, 1, 1, 1, 0, 4, 4, 4, 3, 4, 4, 3, 3, 4, 4, 4, 4
 };
 
+
+unsigned int LEVEL1_DATA[] =
+{
+    21,21,21,21,22,23,24,24,21,21,21,22,23,24,24,24,24,21,22,23,24,21,21,21,22,23,24,24,24,21,
+    21,22,23,21,22,23,24,21,22,21,21,22,23,24,21,21,21,22,21,22,23,24,21,21,22,23,24,24,24,21,
+    21,22,23,21,22,23,24,23,21,22,21,22,23,24,21,21,21,22,21,22,23,24,24,21,21,22,23,24,21,22,
+    21,22,23,21,21,22,23,24,21,21,22,23,24,24,24,24,21,22,23,21,22,23,24,22,21,22,23,24,21,22,
+    21,22,23,21,21,22,23,24,21,21,22,23,24,24,21,21,22,23,24,23,21,22,23,24,23,21,22,23,24,23,
+    21,22,21,22,21,21,22,23,24,21,22,23,24,24,23,21,22,23,24,23,21,22,23,24,23,21,22,23,24,23,
+    21,22,21,22,21,21,22,23,24,21,22,23,24,24,21,21,22,23,24,23,24,21,22,23,24,21,22,23,24,24,
+    21,22,21,22,21,22,21,22,23,24,22,23,24,24,23,21,22,23,21,22,23,21,22,23,24,24,21,22,23,24,
+    21,22,21,22,21,22,21,1,2,2,133,155,2,2,2,2,2,2,2,2,2,2,2,3,23,24,21,22,23,24,
+    21,22,21,22,21,22,21,30,145,115,133,133,115,115,115,115,115,115,115,115,115,115,144,32,22,23,24,22,23,24,
+    21,21,22,23,21,22,23,30,115,130,155,133,115,144,143,115,115,115,115,143,145,115,115,32,22,23,24,22,23,24,
+    21,21,22,23,21,22,23,30,146,115,133,133,128,115,115,115,115,143,115,115,143,115,115,32,21,22,23,24,23,24,
+    21,21,22,23,21,22,23,30,144,115,133,133,115,115,115,115,115,115,115,130,115,115,143,32,23,21,22,23,24,23,
+    21,21,22,23,21,22,23,30,115,115,133,133,115,115,115,115,130,115,115,115,115,115,115,32,23,21,22,23,24,23,
+    21,22,23,24,21,22,23,30,144,115,131,132,115,115,146,115,145,115,143,128,115,115,143,32,23,24,21,22,23,24,
+    21,22,23,24,23,21,22,30,115,115,151,152,115,115,143,115,115,115,115,115,115,115,115,32,23,24,21,22,23,24,
+    21,22,23,24,23,21,22,30,115,115,135,134,115,115,144,115,145,115,143,133,115,130,115,32,22,23,21,22,23,24,
+    21,22,23,24,23,21,22,30,115,115,133,153,133,115,128,115,115,115,133,133,115,115,115,32,22,23,21,22,23,24,
+    21,22,23,24,23,21,22,30,115,128,115,133,153,133,133,133,133,133,133,154,133,133,133,154,22,23,21,22,23,24,
+    21,22,23,24,23,21,22,30,130,145,115,115,115,133,133,154,133,133,154,133,133,133,133,153,22,23,21,22,23,24,
+    21,22,23,24,24,21,22,30,130,130,115,146,144,115,115,115,115,115,115,115,115,144,145,155,22,21,22,23,24,24,
+    21,22,23,24,24,23,21,55,56,56,56,56,56,56,56,56,56,56,56,56,56,56,56,57,22,21,22,23,24,23,
+    22,23,24,24,24,23,21,22,23,24,23,24,21,22,23,24,21,22,23,24,22,21,21,22,21,21,22,23,24,23,
+    22,23,24,24,24,23,21,22,23,24,23,24,21,22,23,24,21,22,23,24,22,21,21,22,21,22,23,24,24,23,
+    22,23,24,24,24,22,21,22,23,24,23,24,22,21,22,23,21,22,23,24,23,21,21,22,21,22,23,24,24,23,
+    22,23,24,24,24,22,23,21,22,23,24,24,21,21,22,23,21,22,23,24,23,21,21,22,21,22,23,24,24,23,
+    22,23,24,23,24,22,23,21,22,23,24,24,21,22,21,22,21,22,23,24,23,21,21,22,21,22,23,24,24,24,
+    22,23,24,23,24,22,23,21,22,23,24,24,21,22,23,21,21,22,23,21,22,23,24,21,22,23,24,22,23,24,
+    22,23,24,23,24,22,23,21,22,23,24,24,21,22,23,24,21,22,23,21,22,23,24,21,22,23,24,22,23,24,
+    22,23,24,23,24,22,23,24,21,22,23,24,21,22,23,24,21,22,23,21,22,23,24,24,24,24,24,22,23,24
+
+};
 
 LevelA::~LevelA()
 {
@@ -47,11 +81,17 @@ void LevelA::initialise()
     m_number_of_enemies = 2;
     m_game_state.next_scene_id = -1;
     
-    GLuint map_texture_id = Utility::load_texture("assets/mainlevbuild.png");
-    m_game_state.map = new Map("assets/map1.tmx", map_texture_id, 16.0f, 64, 40);
+    GLuint map_texture_id = Utility::load_texture("assets/farm_tileset.png");
+    m_game_state.map = new Map(
+        LEVEL_WIDTH,      // Width of the map in tiles
+        LEVEL_HEIGHT,     // Height of the map in tiles
+        LEVEL1_DATA,      // Tile data array
+        map_texture_id,   // Texture ID of the tileset
+        1.0f,             // Tile size in game units
+        16,               // Tile count (columns) in the tileset
+        19                // Tile count (rows) in the tileset
+    );
 
-    //GLuint map_texture_id = Utility::load_texture("assets/tileset_summer2.png");
-    //m_game_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELA_DATA, map_texture_id, 1.0f,6, 1);
     
     // Code from main.cpp's initialise()
     /**
@@ -87,7 +127,7 @@ void LevelA::initialise()
     );
     m_game_state.player->m_visual_scale = 2.0f;
     
-    m_game_state.player->set_position(glm::vec3(2.5f, 0.0f, 0.0f));
+    m_game_state.player->set_position(glm::vec3(10.5f, -10.0f, 0.0f));
 
     // Jumping
     m_game_state.player->set_jumping_power(5.0f);
@@ -125,12 +165,12 @@ void LevelA::initialise()
         );
         m_game_state.enemies[i].m_visual_scale = 1.0f; // scale of enemies
     }
-    m_game_state.enemies[0].set_position(glm::vec3(8.0f, -3.0f, 0.0f));
-    m_game_state.enemies[0].set_ai_type(PATROL);
-    m_game_state.enemies[0].set_ai_state(PATROLLING);
-    m_game_state.enemies[0].set_speed(1.5f);
+    m_game_state.enemies[0].set_position(glm::vec3(8.0f, -14.0f, 0.0f));
+    m_game_state.enemies[0].set_ai_type(GUARD);
+    m_game_state.enemies[0].set_ai_state(IDLE);
+    m_game_state.enemies[0].set_jumping_power(2.0f);
     
-    m_game_state.enemies[1].set_position(glm::vec3(16.0f, -5.125f, 0.0f));
+    m_game_state.enemies[1].set_position(glm::vec3(16.0f, -16.125f, 0.0f));
     m_game_state.enemies[1].set_ai_type(PATROL);
     m_game_state.enemies[1].set_ai_state(PATROLLING);
     m_game_state.enemies[1].set_movement(glm::vec3(-1.0f, 0.0f, 0.0f));
@@ -180,15 +220,9 @@ void LevelA::update(float delta_time)
 void LevelA::render(ShaderProgram *program)
 {
     glClearColor(0.53f, 0.81f, 0.92f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-    // Render all layers of the map
-    for (int i = 0; i < m_game_state.map->get_layer_count(); ++i) {
-        m_game_state.map->render_layer(program, i);
-    }
-
+    glClear(GL_COLOR_BUFFER_BIT);
+    m_game_state.map->render(program);
     m_game_state.player->render(program);
-    for (int i = 0; i < m_number_of_enemies; ++i) {
-        m_game_state.enemies[i].render(program);
-    }
+    for (int i = 0; i < m_number_of_enemies; i++)
+            m_game_state.enemies[i].render(program);
 }

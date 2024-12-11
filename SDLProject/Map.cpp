@@ -1,75 +1,60 @@
 #include "Map.h"
+#include <set>
 
-Map::Map(const char* tmx_file, GLuint texture_id, float tile_size, int tile_count_x, int tile_count_y)
-    : m_texture_id(texture_id), m_tile_size(tile_size), m_tile_count_x(tile_count_x), m_tile_count_y(tile_count_y) {
-
-    tinyxml2::XMLDocument doc;
-    if (doc.LoadFile(tmx_file) != tinyxml2::XML_SUCCESS) {
-        std::cerr << "Failed to load TMX file: " << tmx_file << std::endl;
-        return;
-    }
-
-    auto mapElement = doc.FirstChildElement("map");
-    m_width = mapElement->IntAttribute("width");
-    m_height = mapElement->IntAttribute("height");
-
-    auto layerElement = mapElement->FirstChildElement("layer");
-    while (layerElement) {
-        auto dataElement = layerElement->FirstChildElement("data");
-        std::string data = dataElement->GetText();
-
-        // Decode CSV layer data
-        std::vector<unsigned int> layer_data;
-        std::stringstream ss(data);
-        std::string token;
-        while (std::getline(ss, token, ',')) {
-            layer_data.push_back(std::stoi(token));
-        }
-
-        m_layers.push_back(layer_data); // Store layer data
-        layerElement = layerElement->NextSiblingElement("layer");
-    }
-
+Map::Map(int width, int height, unsigned int *level_data, GLuint texture_id, float tile_size, int tile_count_x, int tile_count_y) :
+m_width(width), m_height(height), m_level_data(level_data), m_texture_id(texture_id), m_tile_size(tile_size), m_tile_count_x(tile_count_x), m_tile_count_y(tile_count_y)
+{
     build();
 }
 
-
 void Map::build() {
-    for (int layer = 0; layer < m_layers.size(); ++layer) {
-        for (int y = 0; y < m_height; ++y) {
-            for (int x = 0; x < m_width; ++x) {
-                int tile = m_layers[layer][y * m_width + x];
-                if (tile == 0) continue;
+    for (int y_coord = 0; y_coord < m_height; y_coord++) {
+        for (int x_coord = 0; x_coord < m_width; x_coord++) {
+            int tile = m_level_data[y_coord * m_width + x_coord];
 
-                float u = (float)(tile % m_tile_count_x) / m_tile_count_x;
-                float v = (float)(tile / m_tile_count_x) / m_tile_count_y;
+            // Skip empty tiles
+            if (tile == 0) continue;
 
-                float tile_width = 1.0f / m_tile_count_x;
-                float tile_height = 1.0f / m_tile_count_y;
+            // Adjust for one-based tile indexing
+            int tile_index = tile - 1;
 
-                float x_offset = -(m_tile_size / 2);
-                float y_offset = (m_tile_size / 2);
+            // UV coordinates
+            float u_coord = (float)(tile_index % m_tile_count_x) / (float)m_tile_count_x;
+            float v_coord = (float)(tile_index / m_tile_count_x) / (float)m_tile_count_y;
 
-                m_vertices.insert(m_vertices.end(), {
-                    x_offset + (m_tile_size * x), y_offset + -(m_tile_size * y),
-                    x_offset + (m_tile_size * x), y_offset + -(m_tile_size * y) - m_tile_size,
-                    x_offset + (m_tile_size * x) + m_tile_size, y_offset + -(m_tile_size * y) - m_tile_size,
-                    x_offset + (m_tile_size * x), y_offset + -(m_tile_size * y),
-                    x_offset + (m_tile_size * x) + m_tile_size, y_offset + -(m_tile_size * y) - m_tile_size,
-                    x_offset + (m_tile_size * x) + m_tile_size, y_offset + -(m_tile_size * y),
-                });
+            float tile_width = 1.0f / (float)m_tile_count_x;
+            float tile_height = 1.0f / (float)m_tile_count_y;
 
-                m_texture_coordinates.insert(m_texture_coordinates.end(), {
-                    u, v,
-                    u, v + tile_height,
-                    u + tile_width, v + tile_height,
-                    u, v,
-                    u + tile_width, v + tile_height,
-                    u + tile_width, v
-                });
-            }
+            float x_offset = -(m_tile_size / 2); // From center of tile
+            float y_offset = (m_tile_size / 2);  // From center of tile
+
+            // Vertices
+            m_vertices.insert(m_vertices.end(), {
+                x_offset + (m_tile_size * x_coord), y_offset + -m_tile_size * y_coord,
+                x_offset + (m_tile_size * x_coord), y_offset + (-m_tile_size * y_coord) - m_tile_size,
+                x_offset + (m_tile_size * x_coord) + m_tile_size, y_offset + (-m_tile_size * y_coord) - m_tile_size,
+                x_offset + (m_tile_size * x_coord), y_offset + -m_tile_size * y_coord,
+                x_offset + (m_tile_size * x_coord) + m_tile_size, y_offset + (-m_tile_size * y_coord) - m_tile_size,
+                x_offset + (m_tile_size * x_coord) + m_tile_size, y_offset + -m_tile_size * y_coord
+            });
+
+            // Texture coordinates
+            m_texture_coordinates.insert(m_texture_coordinates.end(), {
+                u_coord, v_coord,
+                u_coord, v_coord + tile_height,
+                u_coord + tile_width, v_coord + tile_height,
+                u_coord, v_coord,
+                u_coord + tile_width, v_coord + tile_height,
+                u_coord + tile_width, v_coord
+            });
         }
     }
+
+    // Bounds
+    m_left_bound = 0 - (m_tile_size / 2);
+    m_right_bound = (m_tile_size * m_width) - (m_tile_size / 2);
+    m_top_bound = 0 + (m_tile_size / 2);
+    m_bottom_bound = -(m_tile_size * m_height) + (m_tile_size / 2);
 }
 
 
@@ -92,38 +77,31 @@ void Map::render(ShaderProgram *program)
     glDisableVertexAttribArray(program->get_tex_coordinate_attribute());
 }
 
-bool Map::is_solid(glm::vec3 position, float *penetration_x, float *penetration_y)
-{
-    // The penetration between the map and the object
-    // The reason why these are pointers is because we want to reassign values
-    // to them in case that we are colliding. That way the object that originally
-    // passed them as values will keep track of these distances
-    // inb4: we're passing by reference
+bool Map::is_solid(glm::vec3 position, float *penetration_x, float *penetration_y) {
     *penetration_x = 0;
     *penetration_y = 0;
+
+    if (position.x < m_left_bound || position.x > m_right_bound) return false;
+    if (position.y > m_top_bound || position.y < m_bottom_bound) return false;
+
+    int tile_x = floor((position.x + (m_tile_size / 2)) / m_tile_size);
+    int tile_y = -(ceil(position.y - (m_tile_size / 2)) / m_tile_size);
+
+    if (tile_x < 0 || tile_x >= m_width) return false;
+    if (tile_y < 0 || tile_y >= m_height) return false;
+
+    int tile = m_level_data[tile_y * m_width + tile_x];
     
+    // Define solid tiles (e.g., IDs 1-10 are solid)
+    const std::set<int> solid_tiles = {21,23,24};
+
+    if (solid_tiles.find(tile) != solid_tiles.end()) {
+        float tile_center_x = (tile_x * m_tile_size);
+        float tile_center_y = -(tile_y * m_tile_size);
+
+        *penetration_x = (m_tile_size / 2) - fabs(position.x - tile_center_x);
+        *penetration_y = (m_tile_size / 2) - fabs(position.y - tile_center_y);
+        return true;
+    }
     return false;
-}
-
-void Map::render_layer(ShaderProgram* program, int layer_index) {
-    if (layer_index < 0 || layer_index >= m_layers.size()) return;
-
-    glm::mat4 model_matrix = glm::mat4(1.0f);
-    program->set_model_matrix(model_matrix);
-
-    glUseProgram(program->get_program_id());
-
-    glVertexAttribPointer(program->get_position_attribute(), 2, GL_FLOAT, false, 0, m_vertices.data());
-    glEnableVertexAttribArray(program->get_position_attribute());
-    glVertexAttribPointer(program->get_tex_coordinate_attribute(), 2, GL_FLOAT, false, 0, m_texture_coordinates.data());
-    glEnableVertexAttribArray(program->get_tex_coordinate_attribute());
-
-    glBindTexture(GL_TEXTURE_2D, m_texture_id);
-    glDrawArrays(GL_TRIANGLES, 0, (int)m_vertices.size() / 2);
-    glDisableVertexAttribArray(program->get_position_attribute());
-    glDisableVertexAttribArray(program->get_tex_coordinate_attribute());
-}
-
-int Map::get_layer_count() const {
-    return m_layers.size();
 }

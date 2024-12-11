@@ -134,7 +134,7 @@ void initialise() {
     // Start at MainMenu
     switch_to_scene(g_main_menu);
     g_effects = new Effects(g_projection_matrix, g_view_matrix);
-    g_effects->start(SHRINK, 1.5f);
+    //g_effects->start(SHRINK, 1.5f);
     //g_effects->start(FADEIN, 4.0f);
     player_initial_position = glm::vec3(0.0f, 0.0f, 0.0f);
 }
