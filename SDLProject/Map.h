@@ -19,6 +19,7 @@ private:
     int m_height;
     
     unsigned int *m_level_data;
+    unsigned int *m_second_layer_data;
     GLuint        m_texture_id;
     
     float m_tile_size;
@@ -30,11 +31,14 @@ private:
     
     float m_left_bound, m_right_bound, m_top_bound, m_bottom_bound;
     
+    
+    
 public:
-    Map(int width, int height, unsigned int *level_data, GLuint texture_id, float tile_size, int
-    tile_count_x, int tile_count_y);
+    Map(int width, int height, unsigned int *level_data, GLuint texture_id, float tile_size,
+            int tile_count_x, int tile_count_y, unsigned int *second_layer_data = nullptr);
     
     void build();
+    void build_second_layer();
     void render(ShaderProgram *program);
     bool is_solid(glm::vec3 position, float *penetration_x, float *penetration_y);
     
