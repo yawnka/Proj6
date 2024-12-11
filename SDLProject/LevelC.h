@@ -3,8 +3,8 @@
 
 class LevelC : public Scene {
 public:
-    int ENEMY_COUNT = 4;
-    int ITEM_COUNT = 4;
+    int ENEMY_COUNT = 5;
+    int ITEM_COUNT = 6;
 
     ~LevelC();
     
