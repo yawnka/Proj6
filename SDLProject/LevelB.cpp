@@ -1,3 +1,12 @@
+/**
+* Author: Yanka Sikder
+* Assignment: Final Proj 6 : Where's the Loot?
+* Date due: 12/11/2024, 2:00pm
+* I pledge that I have completed this assignment without
+* collaborating with anyone else, in conformance with the
+* NYU School of Engineering Policies and Procedures on
+* Academic Misconduct.
+**/
 #include "LevelB.h"
 #include "Utility.h"
 
