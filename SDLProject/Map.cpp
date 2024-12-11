@@ -92,7 +92,6 @@ bool Map::is_solid(glm::vec3 position, float *penetration_x, float *penetration_
 
     int tile = m_level_data[tile_y * m_width + tile_x];
     
-    // Define solid tiles (e.g., IDs 1-10 are solid)
     const std::set<int> solid_tiles = {21,22,23,24};
 
     if (solid_tiles.find(tile) != solid_tiles.end()) {
