@@ -87,6 +87,7 @@ int g_current_scene_index = 0;
 
 // for audio
 Mix_Chunk* collect_item_sfx = nullptr;
+Mix_Chunk* death_sfx = nullptr;
 
 // ––––– GENERAL FUNCTIONS ––––– //
 void switch_to_scene(Scene *scene) {
@@ -156,9 +157,13 @@ void initialise() {
     }
     // Load the collect item sound effect
     collect_item_sfx = Mix_LoadWAV("assets/collect_item.wav");
-    if (!collect_item_sfx) {
-        std::cout << "Failed to load collect item sound effect: " << Mix_GetError() << std::endl;
-    }
+//    if (!collect_item_sfx) {
+//        std::cout << "Failed to load collect item sound effect: " << Mix_GetError() << std::endl;
+//    }
+    death_sfx = Mix_LoadWAV("assets/death.wav");
+//    if (!death_sfx) {
+//        std::cout << "Failed to load death sound effect: " << Mix_GetError() << std::endl;
+//    }
     //g_effects = new Effects(g_projection_matrix, g_view_matrix);
     // Start at MainMenu
     switch_to_scene(g_main_menu);
@@ -326,7 +331,7 @@ void update()
                     if (curr_lives > 0)
                     {
                         curr_lives -= 1;
-
+                        Mix_PlayChannel(-1, death_sfx, 0);
                         // Fetch the initial position dynamically from the current scene
                         if (dynamic_cast<LevelA*>(g_current_scene)) {
                             player_initial_position = static_cast<LevelA*>(g_current_scene)->get_player_initial_position();
@@ -375,6 +380,7 @@ void update()
                         if (curr_lives > 0)
                         {
                             curr_lives -= 1;
+                            Mix_PlayChannel(-1, death_sfx, 0);
                             // Fetch the initial position dynamically from the current scene
                             if (dynamic_cast<LevelA*>(g_current_scene)) {
                                 player_initial_position = static_cast<LevelA*>(g_current_scene)->get_player_initial_position();
