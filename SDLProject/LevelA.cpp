@@ -4,6 +4,15 @@
 #define LEVEL_WIDTH 30
 #define LEVEL_HEIGHT 30
 
+#include <cstdlib>
+#include <ctime>
+
+constexpr int NUM_ITEMS = 4;
+
+GLuint item_textures[NUM_ITEMS];
+
+
+
 constexpr char SPRITESHEET_FILEPATH[] = "assets/player0.png",
            ENEMY_FILEPATH[]       = "assets/enemy.png";
 
@@ -95,6 +104,7 @@ LevelA::~LevelA()
     delete [] m_game_state.enemies;
     delete    m_game_state.player;
     delete    m_game_state.map;
+    delete[] m_game_state.items;
 //    Mix_FreeChunk(m_game_state.jump_sfx);
 //    Mix_FreeMusic(m_game_state.bgm);
     if (m_game_state.jump_sfx)
@@ -126,6 +136,36 @@ void LevelA::initialise()
         19,               // Tile count (rows) in the tileset
         SECOND_LAYER_LVL1DATA // Second layer tile data
     );
+    
+    // items!
+    item_textures[0] = Utility::load_texture("assets/1.png");
+    item_textures[1] = Utility::load_texture("assets/6.png");
+    item_textures[2] = Utility::load_texture("assets/8.png");
+    item_textures[3] = Utility::load_texture("assets/9.png");
+    
+    constexpr int NUM_ITEMS = 4;
+    glm::vec3 item_positions[NUM_ITEMS] = {
+        glm::vec3(7.8f, -19.5f, 0.0f), // Item 1 position
+        glm::vec3(22.0f, -8.8f, 0.0f), // Item 2 position
+        glm::vec3(15.0f, -11.0f, 0.0f), // Item 3 position
+        glm::vec3(12.8f, -9.0f, 0.0f)  // Item 4 position
+    };
+    
+    m_game_state.items = new Entity[NUM_ITEMS];
+
+    for (int i = 0; i < NUM_ITEMS; i++) {
+        // Assign textures and properties
+        m_game_state.items[i] = Entity(
+            item_textures[i % NUM_ITEMS], // Cycle through item textures
+            0.0f,                        // Speed (not moving)
+            0.5f,                        // Width
+            0.5f,                        // Height
+            ITEM                         // Entity type
+        );
+
+        m_game_state.items[i].set_position(item_positions[i]);
+    }
+
     
     // Code from main.cpp's initialise()
     /**
@@ -248,6 +288,12 @@ void LevelA::update(float delta_time)
     float transition_min_y = -19.5f;  // Minimum y coordinate
     float transition_max_y = -17.0f;  // Maximum y coordinate
 
+    for (int i = 0; i < NUM_ITEMS; i++) {
+        if (m_game_state.items[i].is_active() && m_game_state.player->check_collision(&m_game_state.items[i])) {
+            m_game_state.items[i].deactivate(); // Deactivate the item
+            m_game_state.num_items_collected++; // Increment collected items
+        }
+    }
     // Get the player's current position
     glm::vec3 player_position = m_game_state.player->get_position();
 
@@ -256,7 +302,7 @@ void LevelA::update(float delta_time)
 
     // Add a small epsilon for floating-point comparison
     float epsilon = 0.01f;
-
+    
     // Check if the player is within the transition region
     if (player_position.x >= transition_min_x - epsilon && player_position.x <= transition_max_x + epsilon &&
         player_position.y >= transition_min_y - epsilon && player_position.y <= transition_max_y + epsilon)
@@ -274,4 +320,10 @@ void LevelA::render(ShaderProgram *program)
     m_game_state.player->render(program);
     for (int i = 0; i < m_number_of_enemies; i++)
             m_game_state.enemies[i].render(program);
+    for (int i = 0; i < NUM_ITEMS; i++) {
+        if (m_game_state.items[i].is_active()) {
+            m_game_state.items[i].render(program);
+        }
+    }
+
 }

@@ -25,6 +25,7 @@ struct GameState
     Map *map;
     Entity *player;
     Entity *enemies;
+    Entity *items;
     
     // ————— AUDIO ————— //
     Mix_Music *bgm;
@@ -33,6 +34,7 @@ struct GameState
     // ————— POINTERS TO OTHER SCENES ————— //
     int next_scene_id;
     int enemies_defeated = 0;
+    int num_items_collected = 0;
 };
 
 class Scene {

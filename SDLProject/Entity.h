@@ -4,7 +4,7 @@
 #include "Map.h"
 #include "glm/glm.hpp"
 #include "ShaderProgram.h"
-enum EntityType { PLATFORM, PLAYER, ENEMY, PROJECTILE  };
+enum EntityType { PLATFORM, PLAYER, ENEMY, PROJECTILE, ITEM  };
 enum AIType { WALKER, GUARD, JUMPER, PATROL, SHOOTER };
 enum AIState { WALKING, IDLE, ATTACKING, JUMPING, PATROLLING, SHOOTING };
 
