@@ -77,6 +77,7 @@ bool g_is_colliding_bottom = false;
 int curr_lives = 3;
 glm::vec3 player_initial_position;
 
+int g_items_collected = 0;
 
 // ––––– GENERAL FUNCTIONS ––––– //
 void switch_to_scene(Scene *scene)
@@ -413,6 +414,10 @@ void render()
         glm::vec3 message_position = glm::vec3(-4.5f, 3.1f, 0.0f);
 
         Utility::draw_text(&g_shader_program, Utility::load_texture("assets/font1.png"), livesText, 0.4f, 0.05f, message_position);
+        
+        std::string itemsText = "ITEMS: " + std::to_string(g_items_collected);
+        glm::vec3 items_position = glm::vec3(-4.5f, 2.6f, 0.0f);
+        Utility::draw_text(&g_shader_program, Utility::load_texture("assets/font1.png"), itemsText, 0.4f, 0.05f, items_position);
 
         g_shader_program.set_view_matrix(g_view_matrix);
     }

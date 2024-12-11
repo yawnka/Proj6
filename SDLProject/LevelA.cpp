@@ -13,7 +13,7 @@ GLuint item_textures[NUM_ITEMS];
 
 extern glm::vec3 player_initial_position;
 
-
+extern int g_items_collected;
 
 constexpr char SPRITESHEET_FILEPATH[] = "assets/player0.png",
            ENEMY_FILEPATH[]       = "assets/enemy.png";
@@ -292,10 +292,12 @@ void LevelA::update(float delta_time)
 
     for (int i = 0; i < NUM_ITEMS; i++) {
         if (m_game_state.items[i].is_active() && m_game_state.player->check_collision(&m_game_state.items[i])) {
-            m_game_state.items[i].deactivate(); // Deactivate the item
-            m_game_state.num_items_collected++; // Increment collected items
+            m_game_state.items[i].deactivate();
+            g_items_collected++;
         }
     }
+
+
     // Get the player's current position
     glm::vec3 player_position = m_game_state.player->get_position();
 
