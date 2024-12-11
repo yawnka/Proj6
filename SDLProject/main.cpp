@@ -291,14 +291,23 @@ void update()
                     }
                     else
                     {
-                        if (curr_lives != 0)
+                        if (curr_lives > 0)
                         {
                             curr_lives -= 1;
-                            g_current_scene->get_state().player->set_position(player_initial_position);
+
+                            // Fetch the initial position dynamically from the current scene
+                            if (dynamic_cast<LevelA*>(g_current_scene)) {
+                                player_initial_position = static_cast<LevelA*>(g_current_scene)->get_player_initial_position();
+                            }
+
+                            // Reset the player's position to the initial position
+                            if (g_current_scene->get_state().player) {
+                                g_current_scene->get_state().player->set_position(player_initial_position);
+                            }
                         }
                         else
                         {
-                            g_app_status = PAUSED;
+                            g_app_status = PAUSED; // End the game when lives reach zero
                             return;
                         }
                     }
@@ -324,14 +333,23 @@ void update()
                         proj_top > player_bottom && proj_bottom < player_top)
                     {
 
-                        if (curr_lives != 0)
+                        if (curr_lives > 0)
                         {
                             curr_lives -= 1;
-                            g_current_scene->get_state().player->set_position(player_initial_position); //reset player
+
+                            // Fetch the initial position dynamically from the current scene
+                            if (dynamic_cast<LevelA*>(g_current_scene)) {
+                                player_initial_position = static_cast<LevelA*>(g_current_scene)->get_player_initial_position();
+                            }
+
+                            // Reset the player's position to the initial position
+                            if (g_current_scene->get_state().player) {
+                                g_current_scene->get_state().player->set_position(player_initial_position);
+                            }
                         }
                         else
                         {
-                            g_app_status = PAUSED;
+                            g_app_status = PAUSED; // End the game when lives reach zero
                             return;
                         }
                     }

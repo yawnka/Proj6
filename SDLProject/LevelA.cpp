@@ -11,6 +11,8 @@ constexpr int NUM_ITEMS = 4;
 
 GLuint item_textures[NUM_ITEMS];
 
+extern glm::vec3 player_initial_position;
+
 
 
 constexpr char SPRITESHEET_FILEPATH[] = "assets/player0.png",
@@ -146,9 +148,9 @@ void LevelA::initialise()
     constexpr int NUM_ITEMS = 4;
     glm::vec3 item_positions[NUM_ITEMS] = {
         glm::vec3(7.8f, -19.5f, 0.0f), // Item 1 position
-        glm::vec3(22.0f, -8.8f, 0.0f), // Item 2 position
-        glm::vec3(15.0f, -11.0f, 0.0f), // Item 3 position
-        glm::vec3(12.8f, -9.0f, 0.0f)  // Item 4 position
+        glm::vec3(22.0f, -8.8f, 0.0f), // Item 6 position
+        glm::vec3(15.0f, -11.0f, 0.0f), // Item 8 position
+        glm::vec3(12.8f, -9.0f, 0.0f)  // Item 9 position
     };
     
     m_game_state.items = new Entity[NUM_ITEMS];
@@ -201,7 +203,8 @@ void LevelA::initialise()
     );
     m_game_state.player->m_visual_scale = 2.0f;
     
-    m_game_state.player->set_position(glm::vec3(10.5f, -10.0f, 0.0f));
+    player_initial_position = glm::vec3(10.5f, -10.0f, 0.0f);
+    m_game_state.player->set_position(player_initial_position);
 
     // Jumping
     m_game_state.player->set_jumping_power(5.0f);
@@ -326,4 +329,8 @@ void LevelA::render(ShaderProgram *program)
         }
     }
 
+}
+
+glm::vec3 LevelA::get_player_initial_position() const {
+    return player_initial_position; // Return the stored initial position
 }
