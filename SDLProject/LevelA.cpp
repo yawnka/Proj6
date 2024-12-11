@@ -7,11 +7,6 @@
 #include <cstdlib>
 #include <ctime>
 
-constexpr int NUM_ITEMS = 4;
-
-GLuint item_textures[NUM_ITEMS];
-
-extern glm::vec3 player_initial_position;
 
 constexpr char SPRITESHEET_FILEPATH[] = "assets/player0.png",
            ENEMY_FILEPATH[]       = "assets/enemy.png";
@@ -137,26 +132,26 @@ void LevelA::initialise()
         SECOND_LAYER_LVL1DATA // Second layer tile data
     );
     
+    GLuint* item_textures = new GLuint[ITEM_COUNT];
     // items!
     item_textures[0] = Utility::load_texture("assets/1.png");
     item_textures[1] = Utility::load_texture("assets/6.png");
     item_textures[2] = Utility::load_texture("assets/8.png");
     item_textures[3] = Utility::load_texture("assets/9.png");
     
-    constexpr int NUM_ITEMS = 4;
-    glm::vec3 item_positions[NUM_ITEMS] = {
-        glm::vec3(7.8f, -19.5f, 0.0f), // Item 1 position
-        glm::vec3(22.0f, -8.8f, 0.0f), // Item 6 position
-        glm::vec3(15.0f, -11.0f, 0.0f), // Item 8 position
-        glm::vec3(12.8f, -9.0f, 0.0f)  // Item 9 position
+    glm::vec3* item_positions = new glm::vec3[ITEM_COUNT] {
+        glm::vec3(7.8f, -19.5f, 0.0f),
+        glm::vec3(22.0f, -8.8f, 0.0f),
+        glm::vec3(15.0f, -11.0f, 0.0f),
+        glm::vec3(12.8f, -9.0f, 0.0f)
     };
     
-    m_game_state.items = new Entity[NUM_ITEMS];
+    m_game_state.items = new Entity[ITEM_COUNT];
 
-    for (int i = 0; i < NUM_ITEMS; i++) {
+    for (int i = 0; i < ITEM_COUNT; i++) {
         // Assign textures and properties
         m_game_state.items[i] = Entity(
-            item_textures[i % NUM_ITEMS], // Cycle through item textures
+            item_textures[i % ITEM_COUNT], // Cycle through item textures
             0.0f,                        // Speed (not moving)
             0.5f,                        // Width
             0.5f,                        // Height
@@ -315,7 +310,7 @@ void LevelA::render(ShaderProgram *program)
     m_game_state.player->render(program);
     for (int i = 0; i < m_number_of_enemies; i++)
             m_game_state.enemies[i].render(program);
-    for (int i = 0; i < NUM_ITEMS; i++) {
+    for (int i = 0; i < ITEM_COUNT; i++) {
         if (m_game_state.items[i].is_active()) {
             m_game_state.items[i].render(program);
         }
@@ -324,5 +319,5 @@ void LevelA::render(ShaderProgram *program)
 }
 
 glm::vec3 LevelA::get_player_initial_position() const {
-    return player_initial_position; // Return the stored initial position
+    return player_initial_position;
 }
