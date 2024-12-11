@@ -25,6 +25,7 @@
 #include "LevelA.h"
 #include "LevelB.h"
 #include "LevelC.h"
+#include "LevelD.h"
 #include "MainMenu.h"
 #include "End.h"
 #include "Effects.h"
@@ -55,12 +56,13 @@ Scene  *g_current_scene;
 LevelA *g_levelA;
 LevelB *g_levelB;
 LevelC *g_levelC;
+LevelD *g_levelD;
 MainMenu *g_main_menu;
 End *g_end;
 
 
 Effects *g_effects;
-Scene   *g_levels[4];
+Scene   *g_levels[5];
 
 SDL_Window* g_display_window;
 
@@ -128,12 +130,14 @@ void initialise() {
     g_levelA = new LevelA();
     g_levelB = new LevelB();
     g_levelC = new LevelC();
+    g_levelD = new LevelD();
     g_end = new End();
 
     g_levels[0] = g_levelA;
     g_levels[1] = g_levelB;
     g_levels[2] = g_levelC;
-    g_levels[3] = g_end;
+    g_levels[3] = g_levelD;
+    g_levels[4] = g_end;
 
     //g_effects = new Effects(g_projection_matrix, g_view_matrix);
     // Start at MainMenu
@@ -309,6 +313,8 @@ void update()
                             player_initial_position = static_cast<LevelB*>(g_current_scene)->get_player_initial_position();
                         } else if (dynamic_cast<LevelC*>(g_current_scene)) {
                             player_initial_position = static_cast<LevelC*>(g_current_scene)->get_player_initial_position();
+                        } else if (dynamic_cast<LevelD*>(g_current_scene)) {
+                            player_initial_position = static_cast<LevelD*>(g_current_scene)->get_player_initial_position();
                         } else {
                             std::cerr << "Error: Unknown scene type!" << std::endl;
                         }
@@ -348,12 +354,15 @@ void update()
                         if (curr_lives > 0)
                         {
                             curr_lives -= 1;
-
                             // Fetch the initial position dynamically from the current scene
                             if (dynamic_cast<LevelA*>(g_current_scene)) {
                                 player_initial_position = static_cast<LevelA*>(g_current_scene)->get_player_initial_position();
                             } else if (dynamic_cast<LevelB*>(g_current_scene)) {
                                 player_initial_position = static_cast<LevelB*>(g_current_scene)->get_player_initial_position();
+                            } else if (dynamic_cast<LevelC*>(g_current_scene)) {
+                                player_initial_position = static_cast<LevelC*>(g_current_scene)->get_player_initial_position();
+                            } else if (dynamic_cast<LevelD*>(g_current_scene)) {
+                                player_initial_position = static_cast<LevelD*>(g_current_scene)->get_player_initial_position();
                             } else {
                                 std::cerr << "Error: Unknown scene type!" << std::endl;
                             }
@@ -426,6 +435,9 @@ void update()
             switch_to_scene(g_levelC);
             break;
         case 3:
+            switch_to_scene(g_levelD);
+            break;
+        case 4:
             switch_to_scene(g_end);
             break;
         default:
@@ -510,6 +522,7 @@ void shutdown()
     delete g_levelA;
     delete g_levelB;
     delete g_levelC;
+    delete g_levelD;
     delete g_effects;
 }
 

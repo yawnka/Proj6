@@ -11,6 +11,7 @@
 		291600252CF2826600640D94 /* MainMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 291600242CF2826400640D94 /* MainMenu.cpp */; };
 		291600292CF2AE8E00640D94 /* End.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 291600282CF2AE8900640D94 /* End.cpp */; };
 		2989F4B52D087BA900466A22 /* tinyxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2989F4B42D087BA900466A22 /* tinyxml2.cpp */; };
+		2989F4B82D09E4D900466A22 /* LevelD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2989F4B72D09E4D700466A22 /* LevelD.cpp */; };
 		8401114628864A3000A4D23F /* Map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8401114428864A3000A4D23F /* Map.cpp */; };
 		844DC28E286650FA0099B183 /* assets in CopyFiles */ = {isa = PBXBuildFile; fileRef = 844DC28D28664F990099B183 /* assets */; };
 		845C739D2846DACD000D6994 /* helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845C739C2846DACD000D6994 /* helper.cpp */; };
@@ -53,6 +54,8 @@
 		291600282CF2AE8900640D94 /* End.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = End.cpp; sourceTree = "<group>"; };
 		2989F4B32D087BA900466A22 /* tinyxml2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tinyxml2.h; sourceTree = "<group>"; };
 		2989F4B42D087BA900466A22 /* tinyxml2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxml2.cpp; sourceTree = "<group>"; };
+		2989F4B62D09E4D100466A22 /* LevelD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LevelD.h; sourceTree = "<group>"; };
+		2989F4B72D09E4D700466A22 /* LevelD.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LevelD.cpp; sourceTree = "<group>"; };
 		8401114428864A3000A4D23F /* Map.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Map.cpp; sourceTree = "<group>"; };
 		8401114528864A3000A4D23F /* Map.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Map.h; sourceTree = "<group>"; };
 		844DC28D28664F990099B183 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
@@ -119,6 +122,8 @@
 		DBDF1B512323DE3F007CECB1 /* SDLProject */ = {
 			isa = PBXGroup;
 			children = (
+				2989F4B72D09E4D700466A22 /* LevelD.cpp */,
+				2989F4B62D09E4D100466A22 /* LevelD.h */,
 				291600282CF2AE8900640D94 /* End.cpp */,
 				291600272CF2AE8000640D94 /* End.h */,
 				291600242CF2826400640D94 /* MainMenu.cpp */,
@@ -225,6 +230,7 @@
 				849F079E2888DDF200816376 /* Scene.cpp in Sources */,
 				2916001F2CF19E4100640D94 /* LevelC.cpp in Sources */,
 				DBDF1B532323DE3F007CECB1 /* main.cpp in Sources */,
+				2989F4B82D09E4D900466A22 /* LevelD.cpp in Sources */,
 				8401114628864A3000A4D23F /* Map.cpp in Sources */,
 				849F07A12888DF1D00816376 /* LevelA.cpp in Sources */,
 				2989F4B52D087BA900466A22 /* tinyxml2.cpp in Sources */,
