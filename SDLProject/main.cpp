@@ -381,22 +381,28 @@ void update()
 
     g_accumulator = delta_time;
 
-    // Prevent the camera from showing anything outside of the "edge" of the level
-    //g_view_matrix = glm::mat4(1.0f);
-
-    // Center the camera on the player without clamping to boundaries
-    if (g_current_scene->get_state().player)
-    {
+    //handling camera
+    if (g_current_scene->get_state().player) {
         glm::vec3 player_pos = g_current_scene->get_state().player->get_position();
 
-        // Update the view matrix to center on the player
         float camera_x = -player_pos.x;
         float camera_y = -player_pos.y;
+
+        // Map boundaries in world coordinates
+        float map_left_bound = g_current_scene->get_state().map->get_left_bound();
+        float map_right_bound = g_current_scene->get_state().map->get_right_bound();
+        float map_bottom_bound = g_current_scene->get_state().map->get_bottom_bound();
+        float map_top_bound = g_current_scene->get_state().map->get_top_bound();
+
+        float viewport_half_width = 5.0f;
+        float viewport_half_height = 3.75f;
+
+        // Clamp camera position to 30x30 map
+        camera_x = glm::clamp(camera_x, -map_right_bound + viewport_half_width, -map_left_bound - viewport_half_width);
+        camera_y = glm::clamp(camera_y, -map_top_bound + viewport_half_height, -map_bottom_bound - viewport_half_height);
+
         g_view_matrix = glm::mat4(1.0f);
         g_view_matrix = glm::translate(g_view_matrix, glm::vec3(camera_x, camera_y, 0));
-
-        // Set the spotlight to follow the player's position
-        //g_shader_program.set_light_position_matrix(player_pos); // Ensure this function sets the light position in the shader
     }
     else
     {

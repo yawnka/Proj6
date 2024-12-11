@@ -310,9 +310,6 @@ void const Entity::check_collision_x(Map *map) {
     }
 }
 
-
-
-
 void Entity::update(float delta_time, Entity *player, Entity *collidable_entities, int collidable_entity_count, Map *map)
 {
     if (!m_is_active) return;
@@ -365,10 +362,25 @@ void Entity::update(float delta_time, Entity *player, Entity *collidable_entitie
     if (map) check_collision_x(map); // Skip if map collisions are disabled
     check_collision_x(collidable_entities, collidable_entity_count);
 
+    // **Clamp the player's position to the map's bounds**
+    if (map) {
+        m_position.x = glm::clamp(
+            m_position.x,
+            map->get_left_bound() + (m_width / 2),  // Left boundary
+            map->get_right_bound() - (m_width / 2) // Right boundary
+        );
+        m_position.y = glm::clamp(
+            m_position.y,
+            map->get_bottom_bound() + (m_height / 2),  // Bottom boundary
+            map->get_top_bound() - (m_height / 2)      // Top boundary
+        );
+    }
+
     // Update model matrix for rendering
     m_model_matrix = glm::mat4(1.0f);
     m_model_matrix = glm::translate(m_model_matrix, m_position);
 }
+
 
 
 void Entity::render(ShaderProgram* program) {
