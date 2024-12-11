@@ -88,6 +88,7 @@ int g_current_scene_index = 0;
 // for audio
 Mix_Chunk* collect_item_sfx = nullptr;
 Mix_Chunk* death_sfx = nullptr;
+Mix_Chunk* level_complete_sfx = nullptr;
 
 // ––––– GENERAL FUNCTIONS ––––– //
 void switch_to_scene(Scene *scene) {
@@ -97,10 +98,14 @@ void switch_to_scene(Scene *scene) {
     else if (scene == g_levelD) g_current_scene_index = 3;
     else if (scene == g_end) g_current_scene_index = 4;
 
-    // Update the currentScene uniform in the shader
+    // Update the currentScene uniform in the shader for req 5
     glUseProgram(g_shader_program.get_program_id());
     glUniform1i(glGetUniformLocation(g_shader_program.get_program_id(), "currentScene"), g_current_scene_index);
 
+    if (scene != g_current_scene && g_current_scene != nullptr) {
+        Mix_PlayChannel(-1, level_complete_sfx, 0);
+    }
+    
     if (scene == g_end) {
         static_cast<End *>(g_end)->set_items_collected(g_items_collected);
     }
@@ -164,6 +169,7 @@ void initialise() {
 //    if (!death_sfx) {
 //        std::cout << "Failed to load death sound effect: " << Mix_GetError() << std::endl;
 //    }
+    level_complete_sfx = Mix_LoadWAV("assets/level_complete.wav");
     //g_effects = new Effects(g_projection_matrix, g_view_matrix);
     // Start at MainMenu
     switch_to_scene(g_main_menu);

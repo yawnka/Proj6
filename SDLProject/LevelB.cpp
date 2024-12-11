@@ -255,7 +255,7 @@ void LevelB::initialise()
     }
 
     // Load and play background music
-    m_game_state.bgm = Mix_LoadMUS("assets/Cloud_Dancer.mp3");
+    m_game_state.bgm = Mix_LoadMUS("assets/Village_Consort.mp3");
     if (!m_game_state.bgm)
     {
         std::cout << "Failed to load BGM: " << Mix_GetError() << std::endl;
