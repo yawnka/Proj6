@@ -13,8 +13,6 @@ GLuint item_textures[NUM_ITEMS];
 
 extern glm::vec3 player_initial_position;
 
-extern int g_items_collected;
-
 constexpr char SPRITESHEET_FILEPATH[] = "assets/player0.png",
            ENEMY_FILEPATH[]       = "assets/enemy.png";
 
@@ -289,13 +287,6 @@ void LevelA::update(float delta_time)
     float transition_max_x = 25.0f;   // Maximum x coordinate
     float transition_min_y = -19.5f;  // Minimum y coordinate
     float transition_max_y = -17.0f;  // Maximum y coordinate
-
-    for (int i = 0; i < NUM_ITEMS; i++) {
-        if (m_game_state.items[i].is_active() && m_game_state.player->check_collision(&m_game_state.items[i])) {
-            m_game_state.items[i].deactivate();
-            g_items_collected++;
-        }
-    }
 
 
     // Get the player's current position

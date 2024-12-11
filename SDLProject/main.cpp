@@ -60,7 +60,7 @@ End *g_end;
 
 
 Effects *g_effects;
-Scene   *g_levels[2];
+Scene   *g_levels[3];
 
 SDL_Window* g_display_window;
 
@@ -77,6 +77,7 @@ bool g_is_colliding_bottom = false;
 int curr_lives = 3;
 glm::vec3 player_initial_position;
 
+int NUM_ITEMS = 11;
 int g_items_collected = 0;
 
 // ––––– GENERAL FUNCTIONS ––––– //
@@ -122,14 +123,14 @@ void initialise() {
 
     g_main_menu = new MainMenu();
     g_levelA = new LevelA();
-//    g_levelB = new LevelB();
+    g_levelB = new LevelB();
 //    g_levelC = new LevelC();
     g_end = new End();
 
     g_levels[0] = g_levelA;
-//    g_levels[1] = g_levelB;
+    g_levels[1] = g_levelB;
 //    g_levels[2] = g_levelC;
-    g_levels[1] = g_end;
+    g_levels[2] = g_end;
 
     //g_effects = new Effects(g_projection_matrix, g_view_matrix);
     // Start at MainMenu
@@ -257,6 +258,22 @@ void update()
                                                         g_current_scene->get_number_of_enemies(),
                                                         g_current_scene->get_state().map);
         }
+        
+        // Handle item collection and deactivation
+        if (g_current_scene->get_state().items)
+        {
+            for (int i = 0; i < NUM_ITEMS; ++i)
+            {
+                Entity& item = g_current_scene->get_state().items[i];
+                if (item.is_active() &&
+                    g_current_scene->get_state().player->check_collision(&item))
+                {
+                    g_items_collected++;
+                    item.deactivate();
+                    g_current_scene->get_state().num_items_collected++;
+                }
+            }
+        }
 
         // Update enemies if they exist
         if (g_current_scene->get_state().enemies)
@@ -383,9 +400,9 @@ void update()
         case 0:
             switch_to_scene(g_levelA);
             break;
-//        case 1:
-//            switch_to_scene(g_levelB);
-//            break;
+        case 1:
+            switch_to_scene(g_levelB);
+            break;
 //        case 2:
 //            switch_to_scene(g_levelC);
 //            break;
