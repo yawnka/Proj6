@@ -155,14 +155,10 @@ bool Map::is_solid(glm::vec3 position, float *penetration_x, float *penetration_
     if (tile_x < 0 || tile_x >= m_width) return false;
     if (tile_y < 0 || tile_y >= m_height) return false;
 
-    // Get the tile from the first layer
     int tile = m_level_data[tile_y * m_width + tile_x];
 
     // If there's a second layer, check it for non-zero tiles
     int second_layer_tile = 0;
-//    if (m_second_layer_data) {
-//        second_layer_tile = m_second_layer_data[tile_y * m_width + tile_x];
-//    }
     if (m_second_layer_data) {
         int second_layer_tile = m_second_layer_data[tile_y * m_width + tile_x];
 

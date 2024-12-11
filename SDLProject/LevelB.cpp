@@ -103,7 +103,7 @@ LevelB::~LevelB()
 
 void LevelB::initialise()
 {
-    m_number_of_enemies = 3;
+    m_number_of_enemies = 5;
     m_game_state.next_scene_id = -1;
     
     GLuint map_texture_id = Utility::load_texture("assets/mapv2.png");
@@ -120,16 +120,20 @@ void LevelB::initialise()
     
     GLuint* item_textures = new GLuint[ITEM_COUNT];
     // items!
-    item_textures[0] = Utility::load_texture("assets/1.png");
-    item_textures[1] = Utility::load_texture("assets/6.png");
-    item_textures[2] = Utility::load_texture("assets/8.png");
-    item_textures[3] = Utility::load_texture("assets/9.png");
+    item_textures[0] = Utility::load_texture("assets/2.png");
+    item_textures[1] = Utility::load_texture("assets/3.png");
+    item_textures[2] = Utility::load_texture("assets/4.png");
+    item_textures[3] = Utility::load_texture("assets/5.png");
+    item_textures[4] = Utility::load_texture("assets/6.png");
+    item_textures[5] = Utility::load_texture("assets/8.png");
     
     glm::vec3* item_positions = new glm::vec3[ITEM_COUNT] {
-        glm::vec3(7.8f, -19.5f, 0.0f),
-        glm::vec3(22.0f, -8.8f, 0.0f),
-        glm::vec3(15.0f, -11.0f, 0.0f),
-        glm::vec3(12.8f, -9.0f, 0.0f)
+        glm::vec3(5.5f, -11.2f, 0.0f),
+        glm::vec3(24.9f, -26.9f, 0.0f),
+        glm::vec3(22.8f, -9.0f, 0.0f),
+        glm::vec3(16.8f, -6.0f, 0.0f),
+        glm::vec3(7.9f, -19.65f, 0.0f),
+        glm::vec3(25.0f, -17.2f, 0.0f)
     };
     
     m_game_state.items = new Entity[ITEM_COUNT];
@@ -182,7 +186,8 @@ void LevelB::initialise()
     );
     m_game_state.player->m_visual_scale = 2.0f;
     
-    player_initial_position = glm::vec3(10.5f, -10.0f, 0.0f);
+    player_initial_position = glm::vec3(1.5f, -25.47, 0.0f);
+    //player_initial_position = glm::vec3(10.5f, -10.0f, 0.0f);
     m_game_state.player->set_position(player_initial_position);
     std::cout << "LevelB Initial Position: "
               << player_initial_position.x << ", "
@@ -225,21 +230,32 @@ void LevelB::initialise()
         );
         m_game_state.enemies[i].m_visual_scale = 1.0f; // scale of enemies
     }
-    m_game_state.enemies[0].set_position(glm::vec3(8.0f, -14.0f, 0.0f));
+    m_game_state.enemies[0].set_position(glm::vec3(9.0f, -13.0f, 0.0f));
     m_game_state.enemies[0].set_ai_type(GUARD);
     m_game_state.enemies[0].set_ai_state(IDLE);
     
-    m_game_state.enemies[1].set_position(glm::vec3(16.0f, -16.125f, 0.0f));
+    m_game_state.enemies[1].set_position(glm::vec3(20.5f, -27.175f, 0.0f));
     m_game_state.enemies[1].set_ai_type(PATROL);
     m_game_state.enemies[1].set_ai_state(PATROLLING);
     m_game_state.enemies[1].set_movement(glm::vec3(-1.0f, 0.0f, 0.0f));
     m_game_state.enemies[1].set_speed(1.5f);
 
-    m_game_state.enemies[2].set_position(glm::vec3(15.0f, -11.0f, 0.0f));
-    m_game_state.enemies[2].set_ai_type(PATROL);
-    m_game_state.enemies[2].set_ai_state(PATROLLING);
-    m_game_state.enemies[2].set_movement(glm::vec3(-1.0f, 0.0f, 0.0f));
-    m_game_state.enemies[2].set_speed(1.5f);
+    m_game_state.enemies[2].set_position(glm::vec3(15.9f, -15.8f, 0.0f));
+    m_game_state.enemies[2].set_walking(enemy_walking_animation);
+    m_game_state.enemies[2].set_ai_type(SHOOTER);
+    m_game_state.enemies[2].set_ai_state(SHOOTING);
+    GLuint projectile_texture1 = Utility::load_texture("assets/bullet.png");
+    m_game_state.enemies[2].set_projectile_texture(projectile_texture1);
+    
+    m_game_state.enemies[3].set_position(glm::vec3(15.9f, -17.83f, 0.0f));
+    m_game_state.enemies[3].set_walking(enemy_walking_animation);
+    m_game_state.enemies[3].set_ai_type(SHOOTER);
+    m_game_state.enemies[3].set_ai_state(SHOOTING);
+    m_game_state.enemies[3].set_projectile_texture(projectile_texture1);
+    
+    m_game_state.enemies[4].set_position(glm::vec3(22.0f, -7.2f, 0.0f));
+    m_game_state.enemies[4].set_ai_type(GUARD);
+    m_game_state.enemies[4].set_ai_state(IDLE);
     
     /**
      BGM and SFX
@@ -273,28 +289,28 @@ void LevelB::update(float delta_time)
         m_game_state.enemies[i].update(delta_time, m_game_state.player, NULL, NULL, m_game_state.map);
     }
 
-    // Define the region for transitioning to the next scene
-    float transition_min_x = 23.0f;   // Minimum x coordinate
-    float transition_max_x = 25.0f;   // Maximum x coordinate
-    float transition_min_y = -19.5f;  // Minimum y coordinate
-    float transition_max_y = -17.0f;  // Maximum y coordinate
-
+    float transition_min_x = 29.0f;
+    float transition_max_x = 29.5f;
+    float transition_min_y = -3.3f;
+    float transition_max_y = -1.5f;
 
     // Get the player's current position
     glm::vec3 player_position = m_game_state.player->get_position();
-
-    // Debugging: Log the player's position
+    
+    //debugging commands
+    std::cout << "Transition Region: X(" << transition_min_x << ", " << transition_max_x
+              << "), Y(" << transition_min_y << ", " << transition_max_y << ")" << std::endl;
     std::cout << "Player Position: (" << player_position.x << ", " << player_position.y << ")" << std::endl;
 
     // Add a small epsilon for floating-point comparison
     float epsilon = 0.01f;
     
-    // Check if the player is within the transition region
     if (player_position.x >= transition_min_x - epsilon && player_position.x <= transition_max_x + epsilon &&
         player_position.y >= transition_min_y - epsilon && player_position.y <= transition_max_y + epsilon)
     {
-        m_game_state.next_scene_id = 2; // Set the next scene ID
+        m_game_state.next_scene_id = 2;
     }
+
 }
 
 void LevelB::render(ShaderProgram *program)

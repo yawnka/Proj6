@@ -41,7 +41,7 @@ void Entity::ai_walk()
 
 void Entity::ai_guard(Entity *player) {
     // Check if player is within a certain distance to activate the guard
-    float activation_distance = 8.0f;
+    float activation_distance = 4.0f;
     float stop_distance = 1.0f; // Minimum distance to stop moving towards the player
 
     float distance_to_player = glm::distance(m_position, player->get_position());
