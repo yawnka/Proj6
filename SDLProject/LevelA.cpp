@@ -245,7 +245,6 @@ void LevelA::initialise()
     m_game_state.enemies[0].set_position(glm::vec3(8.0f, -14.0f, 0.0f));
     m_game_state.enemies[0].set_ai_type(GUARD);
     m_game_state.enemies[0].set_ai_state(IDLE);
-    m_game_state.enemies[0].set_jumping_power(2.0f);
     
     m_game_state.enemies[1].set_position(glm::vec3(16.0f, -16.125f, 0.0f));
     m_game_state.enemies[1].set_ai_type(PATROL);

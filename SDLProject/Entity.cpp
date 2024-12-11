@@ -39,42 +39,50 @@ void Entity::ai_walk()
     m_movement = glm::vec3(-1.0f, 0.0f, 0.0f);
 }
 
-void Entity::ai_guard(Entity *player)
-{
+void Entity::ai_guard(Entity *player) {
+    // Check if player is within a certain distance to activate the guard
+    float activation_distance = 8.0f;
+    float stop_distance = 1.0f; // Minimum distance to stop moving towards the player
+
+    float distance_to_player = glm::distance(m_position, player->get_position());
+
     switch (m_ai_state) {
         case IDLE:
-            if (glm::distance(m_position, player->get_position()) < 3.0f) {
+            if (distance_to_player < activation_distance) {
                 m_ai_state = WALKING;
             }
             break;
-            
+
         case WALKING:
-            if (m_position.x > player->get_position().x) { // Move left
-                m_movement = glm::vec3(-1.0f, 0.0f, 0.0f);
-                m_animation_indices = m_walking[0]; // Set left-facing animation frames
-            } else { // Move right
-                m_movement = glm::vec3(1.0f, 0.0f, 0.0f);
-                m_animation_indices = m_walking[1]; // Set right-facing animation frames
+            if (distance_to_player > activation_distance) {
+                // If the player moves too far, return to IDLE state
+                m_ai_state = IDLE;
+                m_movement = glm::vec3(0.0f); // Stop movement
+            } else if (distance_to_player > stop_distance) {
+                // Move towards the player slowly
+                glm::vec3 direction = player->get_position() - m_position;
+                m_movement = glm::normalize(direction) * (m_speed * 0.2f); // Move at half speed
+                // Update animations based on movement direction
+                if (direction.x < 0) {
+                    m_animation_indices = m_walking[LEFT];
+                } else if (direction.x > 0) {
+                    m_animation_indices = m_walking[RIGHT];
+                }
+                if (direction.y > 0) {
+                    m_animation_indices = m_walking[UP];
+                } else if (direction.y < 0) {
+                    m_animation_indices = m_walking[DOWN];
+                }
+            } else {
+                // Stop moving if close enough to the player
+                m_movement = glm::vec3(0.0f);
             }
             break;
-            
-        case ATTACKING:
-            // Add any attacking-specific logic here
-            break;
-            
         default:
             break;
     }
-
-    // Flip direction if a collision (into a wall) is detected
-    if (m_collided_left) {
-        m_movement.x = 1.0f;  // Flip to move right
-        m_animation_indices = m_walking[1]; // Set right-facing animation frames
-    } else if (m_collided_right) {
-        m_movement.x = -1.0f; // Flip to move left
-        m_animation_indices = m_walking[0]; // Set left-facing animation frames
-    }
 }
+
 
 
 

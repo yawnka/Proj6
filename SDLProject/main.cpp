@@ -277,39 +277,24 @@ void update()
                 if (g_current_scene->get_state().player &&
                     g_current_scene->get_state().player->check_collision(&enemy))
                 {
-                    if (g_current_scene->get_state().player->get_position().y >
-                        enemy.get_position().y + enemy.get_height() / 2.0f)
+                    if (curr_lives > 0)
                     {
-                        enemy.deactivate();
-                        g_current_scene->get_state().enemies_defeated += 1;
+                        curr_lives -= 1;
 
-                        // Deactivate projectile if enemy is a shooter
-                        if (enemy.get_ai_type() == SHOOTER)
-                        {
-                            enemy.set_projectile_active(false);
+                        // Fetch the initial position dynamically from the current scene
+                        if (dynamic_cast<LevelA*>(g_current_scene)) {
+                            player_initial_position = static_cast<LevelA*>(g_current_scene)->get_player_initial_position();
+                        }
+
+                        // Reset the player's position to the initial position
+                        if (g_current_scene->get_state().player) {
+                            g_current_scene->get_state().player->set_position(player_initial_position);
                         }
                     }
                     else
                     {
-                        if (curr_lives > 0)
-                        {
-                            curr_lives -= 1;
-
-                            // Fetch the initial position dynamically from the current scene
-                            if (dynamic_cast<LevelA*>(g_current_scene)) {
-                                player_initial_position = static_cast<LevelA*>(g_current_scene)->get_player_initial_position();
-                            }
-
-                            // Reset the player's position to the initial position
-                            if (g_current_scene->get_state().player) {
-                                g_current_scene->get_state().player->set_position(player_initial_position);
-                            }
-                        }
-                        else
-                        {
-                            g_app_status = PAUSED; // End the game when lives reach zero
-                            return;
-                        }
+                        g_app_status = PAUSED; // End the game when lives reach zero
+                        return;
                     }
                 }
 
